@@ -1,9 +1,11 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/react-starter-kit",
+    "name": "fredger",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "The AI assistant to handle your invoice.",
     "keywords": [
+        "invoice",
+        "ai assistant",
         "laravel",
         "framework"
     ],
