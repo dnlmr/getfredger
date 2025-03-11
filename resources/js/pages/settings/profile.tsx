@@ -9,6 +9,7 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 
@@ -24,6 +25,10 @@ interface ProfileForm {
     email: string;
 }
 
+interface LanguageForm {
+    language: string;
+}
+
 export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: boolean; status?: string }) {
     const { auth } = usePage<SharedData>().props;
 
@@ -32,10 +37,22 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
         email: auth.user.email,
     });
 
+    const { data: languageData, setData: setLanguageData, patch: patchLanguage, processing: processingLanguage, recentlySuccessful: recentlySuccessfulLanguage } = useForm<LanguageForm>({
+        language: auth.user.language || 'en',
+    });
+
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
         patch(route('profile.update'), {
+            preserveScroll: true,
+        });
+    };
+
+    const submitLanguage: FormEventHandler = (e) => {
+        e.preventDefault();
+
+        patchLanguage(route('profile.update.language'), {
             preserveScroll: true,
         });
     };
@@ -109,6 +126,47 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
 
                             <Transition
                                 show={recentlySuccessful}
+                                enter="transition ease-in-out"
+                                enterFrom="opacity-0"
+                                leave="transition ease-in-out"
+                                leaveTo="opacity-0"
+                            >
+                                <p className="text-sm text-neutral-600">Saved</p>
+                            </Transition>
+                        </div>
+                    </form>
+                </div>
+
+                <div className="mt-10 space-y-6">
+                    <HeadingSmall title="Language preferences" description="Choose your preferred language" />
+
+                    <form onSubmit={submitLanguage} className="space-y-6">
+                        <div className="grid gap-2">
+                            <Label htmlFor="language">Language</Label>
+
+                            <Select
+                                value={languageData.language}
+                                onValueChange={(value) => setLanguageData('language', value)}
+                            >
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select a language" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="en">English</SelectItem>
+                                    <SelectItem value="fr">Français</SelectItem>
+                                    <SelectItem value="de">Deutsch</SelectItem>
+                                    <SelectItem value="es">Español</SelectItem>
+                                </SelectContent>
+                            </Select>
+
+                            <InputError className="mt-2" message={errors.language} />
+                        </div>
+
+                        <div className="flex items-center gap-4">
+                            <Button disabled={processingLanguage}>Save language</Button>
+
+                            <Transition
+                                show={recentlySuccessfulLanguage}
                                 enter="transition ease-in-out"
                                 enterFrom="opacity-0"
                                 leave="transition ease-in-out"
