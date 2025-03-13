@@ -19,3 +19,11 @@ Upload your invoice as an image or PDF and let Fredger do the rest. Fredger will
 | White-Label Option | ❌ | ❌ | ❌ | ✅ Available |
 | API Access | ❌ | ❌ | ❌ | ✅ Yes |
 | Pay-as-You-Go Option | ✅ (€0.25/invoice) | ✅ (€0.25/invoice) | ✅ (€0.20/invoice) | ✅ Custom Pricing |
+
+## Roadmap
+
+- PDF 2 Markdown
+    - https://github.com/jzillmann/pdf-to-markdown
+    - https://github.com/jonschlinkert/remarkable
+    - https://github.com/opengovsg/pdf2md
+    - pdfjs-dist

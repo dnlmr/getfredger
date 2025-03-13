@@ -274,7 +274,7 @@ const InvoiceUploadDropzone = () => {
     <div
       {...getRootProps()}
       className={`border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border transition-all duration-200
-        ${isDragActive ? 'bg-blue-50/30 dark:bg-blue-900/10 border-blue-300 dark:border-blue-500/50' : 'hover:bg-gray-50 hover:border-gray-300 dark:hover:border-gray-500/50 dark:hover:bg-gray-800/50'}
+        ${isDragActive ? 'bg-blue-50/30 dark:bg-blue-900/10 border-blue-300 dark:border-blue-500/50' : 'hover:bg-gray-50 hover:border-gray-300 hover:border-dashed dark:hover:border-gray-500/50 dark:hover:bg-gray-800/50'}
       `}
     >
       <input {...getInputProps()} />
@@ -313,7 +313,7 @@ const InvoiceUploadDropzone = () => {
                 </button>
               </div>
             </div>
-            <ScrollArea className="flex-1 pr-4">
+            <ScrollArea className="flex-1">
               <div className="grid gap-2">
                 {files.map((file, index) => {
                   const thumbnail = getThumbnail(file);
