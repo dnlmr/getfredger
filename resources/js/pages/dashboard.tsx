@@ -4,7 +4,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
 import { FolderUp, ImageIcon, Upload, X, CheckCircle, AlertCircle } from 'lucide-react';
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { z } from 'zod';
 import { Progress } from '@/components/ui/progress';
@@ -92,6 +92,10 @@ const InvoiceUploadDropzone = () => {
   }>>({});
   const [currentUploadIndex, setCurrentUploadIndex] = useState<number | null>(null);
 
+  // Ref for the current uploading file element
+  const currentFileRef = useRef<HTMLDivElement | null>(null);
+  const scrollAreaRef = useRef<HTMLDivElement | null>(null);
+
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
 
@@ -159,6 +163,34 @@ const InvoiceUploadDropzone = () => {
       setFileStatus({});
     }
   }, []);
+
+  // Auto-scroll to the current upload - using manual scroll position instead of scrollIntoView
+  useEffect(() => {
+    if (currentUploadIndex !== null && currentFileRef.current && scrollAreaRef.current) {
+      // Get the parent scrollable element (the actual scrollable viewport in the ScrollArea)
+      const scrollableParent = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+
+      if (scrollableParent) {
+        // Small delay to ensure the UI has updated
+        setTimeout(() => {
+          // Get the position of the current element relative to its scrollable parent
+          const elementRect = currentFileRef.current?.getBoundingClientRect();
+          const containerRect = scrollableParent.getBoundingClientRect();
+
+          if (elementRect) {
+            // Calculate the scroll position (element's top relative to container)
+            const scrollTop = elementRect.top - containerRect.top + scrollableParent.scrollTop;
+
+            // Smooth scroll to position
+            scrollableParent.scrollTo({
+              top: scrollTop,
+              behavior: 'smooth'
+            });
+          }
+        }, 100);
+      }
+    }
+  }, [currentUploadIndex]);
 
   // Upload a single file
   const uploadFile = (index: number) => {
@@ -273,8 +305,8 @@ const InvoiceUploadDropzone = () => {
   return (
     <div
       {...getRootProps()}
-      className={`border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border transition-all duration-200
-        ${isDragActive ? 'bg-blue-50/30 dark:bg-blue-900/10 border-blue-300 dark:border-blue-500/50' : 'hover:bg-gray-50 hover:border-gray-300 hover:border-dashed dark:hover:border-gray-500/50 dark:hover:bg-gray-800/50'}
+      className={`border-transparent dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border transition-all duration-200
+        ${isDragActive ? 'bg-blue-50/30 dark:bg-blue-900/10 border-blue-300 dark:border-blue-500/50' : 'hover:bg-gray-50 hover:border-gray-300 border-dashed dark:hover:border-gray-500/50 dark:hover:bg-gray-800/30'}
       `}
     >
       <input {...getInputProps()} />
@@ -313,61 +345,74 @@ const InvoiceUploadDropzone = () => {
                 </button>
               </div>
             </div>
-            <ScrollArea className="flex-1">
-              <div className="grid gap-2">
-                {files.map((file, index) => {
-                  const thumbnail = getThumbnail(file);
-                  const fileInfo = fileStatus[file.name] || { progress: 0, status: 'idle' };
+            <div className="flex-1 overflow-hidden ">
+              <ScrollArea className="h-full max-h-[calc(100%-5px)]" ref={scrollAreaRef}>
+                <div className="grid gap-2 pr-3ZZZ">
+                  {files.map((file, index) => {
+                    const thumbnail = getThumbnail(file);
+                    const fileInfo = fileStatus[file.name] || { progress: 0, status: 'idle' };
+                    const isCurrentUpload = currentUploadIndex === index;
 
-                  return (
-                    <div
-                      key={`${file.name}-${index}`}
-                      className="flex flex-col gap-2 rounded border border-gray-200 p-2 dark:border-gray-700"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded bg-gray-100 dark:bg-gray-800">
-                          {thumbnail ? (
-                            <img src={thumbnail} alt={file.name} className="h-full w-full rounded object-cover" />
-                          ) : (
-                            getFileIcon(file)
+                    return (
+                      <div
+                        key={`${file.name}-${index}`}
+                        ref={isCurrentUpload ? currentFileRef : null}
+                        className={`flex flex-col gap-2 rounded border p-2
+                          ${isCurrentUpload
+                            ? 'border-blue-300 bg-blue-50/50 dark:border-blue-700 dark:bg-blue-900/20'
+                            : 'border-gray-200 dark:border-gray-700'}
+                          ${fileInfo.status === 'success'
+                            ? 'border-green-200 bg-green-50/30 dark:border-green-800/50 dark:bg-green-900/10'
+                            : fileInfo.status === 'error'
+                              ? 'border-red-200 bg-red-50/30 dark:border-red-800/50 dark:bg-red-900/10'
+                              : ''}
+                        `}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-10 w-10 items-center justify-center rounded bg-gray-100 dark:bg-gray-800">
+                            {thumbnail ? (
+                              <img src={thumbnail} alt={file.name} className="h-full w-full rounded object-cover" />
+                            ) : (
+                              getFileIcon(file)
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="truncate text-sm font-medium">{file.name}</span>
+                              {getStatusIcon(fileInfo.status)}
+                            </div>
+                            <div className="text-xs text-gray-500">{formatFileSize(file.size)}</div>
+                          </div>
+                          {fileInfo.status === 'idle' && (
+                            <button
+                              onClick={() => removeFile(index)}
+                              className="rounded-full p-1 hover:bg-gray-100 dark:hover:bg-gray-800"
+                              title="Remove file"
+                            >
+                              <X className="h-4 w-4 text-gray-500" />
+                            </button>
                           )}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="truncate text-sm font-medium">{file.name}</span>
-                            {getStatusIcon(fileInfo.status)}
-                          </div>
-                          <div className="text-xs text-gray-500">{formatFileSize(file.size)}</div>
-                        </div>
-                        {fileInfo.status === 'idle' && (
-                          <button
-                            onClick={() => removeFile(index)}
-                            className="rounded-full p-1 hover:bg-gray-100 dark:hover:bg-gray-800"
-                            title="Remove file"
-                          >
-                            <X className="h-4 w-4 text-gray-500" />
-                          </button>
+
+                        {fileInfo.status !== 'idle' && (
+                          <Progress
+                            value={fileInfo.progress}
+                            className={`h-1 ${
+                              fileInfo.status === 'success'
+                                ? 'bg-green-100 dark:bg-green-900/20'
+                                : fileInfo.status === 'error'
+                                  ? 'bg-red-100 dark:bg-red-900/20'
+                                  : 'bg-blue-100 dark:bg-blue-900/20'
+                            }`}
+                          />
                         )}
                       </div>
-
-                      {fileInfo.status !== 'idle' && (
-                        <Progress
-                          value={fileInfo.progress}
-                          className={`h-1 ${
-                            fileInfo.status === 'success'
-                              ? 'bg-green-100 dark:bg-green-900/20'
-                              : fileInfo.status === 'error'
-                                ? 'bg-red-100 dark:bg-red-900/20'
-                                : 'bg-blue-100 dark:bg-blue-900/20'
-                          }`}
-                        />
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </ScrollArea>
+                    );
+                  })}
+                </div>
+              </ScrollArea>
+            </div>
             <div className="mt-2 text-center">
               <p className="text-xs text-gray-500">
                 Drop more files or click to browse
@@ -405,13 +450,13 @@ export default function Dashboard() {
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
+                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+                    </div>
+                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
+                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+                    </div>
                     <InvoiceUploadDropzone />
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
                 </div>
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
 

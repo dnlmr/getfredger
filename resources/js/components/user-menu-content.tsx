@@ -3,7 +3,7 @@ import { UserInfo } from '@/components/user-info';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { type User } from '@/types';
 import { Link } from '@inertiajs/react';
-import { LogOut, Settings } from 'lucide-react';
+import { Bell, CreditCard, LogOut, Settings } from 'lucide-react';
 
 interface UserMenuContentProps {
     user: User;
@@ -22,9 +22,30 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
+                    <Link className="block w-full" href="#" as="button">
+                        <span className="text-xxs px-1.5 py-0.5 bg-linear-to-r/oklch from-indigo-500 to-teal-500 text-white rounded-sm font-bold font-mono">PRO</span>
+                        Upgrade to Pro
+                    </Link>
+                </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+                <DropdownMenuItem asChild>
                     <Link className="block w-full" href={route('profile.edit')} as="button" prefetch onClick={cleanup}>
                         <Settings className="mr-2" />
                         Settings
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link className="block w-full" href={route('profile.edit')} as="button" prefetch onClick={cleanup}>
+                        <CreditCard className="mr-2" />
+                        Billing
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link className="block w-full" href={route('profile.edit')} as="button" prefetch onClick={cleanup}>
+                        <Bell className="mr-2" />
+                        Notifications
                     </Link>
                 </DropdownMenuItem>
             </DropdownMenuGroup>
