@@ -4,6 +4,10 @@ Fredger is your invoice butler.
 
 Upload your invoice as an image or PDF and let Fredger do the rest. Fredger will extract the relevant information and store it in a structured way. Export your balance sheet as an Excel file. Very nice.
 
+## Design Inspiration
+
+- https://polar.sh/ (video)
+
 ## Pricing Table
 
 
