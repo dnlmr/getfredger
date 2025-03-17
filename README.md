@@ -7,6 +7,7 @@ Upload your invoice as an image or PDF and let Fredger do the rest. Fredger will
 ## Design Inspiration
 
 - https://polar.sh/ (video)
+- https://originui.com/
 
 ## Pricing Table
 

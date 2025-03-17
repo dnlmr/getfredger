@@ -13,7 +13,7 @@ it('switches the current team for the user', function () {
     );
 
     actingAs($user)
-        ->patch(route('teams.current', $team))
+        ->patch(route('team.current', $team))
         ->assertRedirect();
 
     expect($user->currentTeam->id)->toBe($team->id);
@@ -25,8 +25,20 @@ it('can not switch to a team that the user does not belong to', function() {
     $anotherTeam = Team::factory()->create();
 
     actingAs($user)
-        ->patch(route('teams.current', $anotherTeam))
+        ->patch(route('team.current', $anotherTeam))
         ->assertForbidden();
 
     expect($user->currentTeam->id)->not->toBe($anotherTeam->id);
+});
+
+it('can update team', function() {
+    $user = User::factory()->create();
+
+    actingAs($user)
+        ->patch(route('team.update', $user->currentTeam), [
+            'name' => $name = 'New Team Name'
+        ])
+        ->assertRedirect();
+
+    expect($user->fresh()->currentTeam->name)->toBe($name);
 });

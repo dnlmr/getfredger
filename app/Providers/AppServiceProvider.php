@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\ServiceProvider;
 
@@ -23,5 +24,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Model::shouldBeStrict();
+
+        RequestException::dontTruncate();
     }
 }
