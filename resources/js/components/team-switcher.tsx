@@ -81,7 +81,7 @@ export function TeamSwitcher() {
                                 className="gap-2 p-2"
                                 asChild
                             >
-                                <Link className="block w-full" href="#" as="button" onClick={cleanup}>
+                                <Link className="block w-full" href={route('team.edit')} as="button" onClick={cleanup}>
                                     <div className="flex size-6 items-center justify-center rounded-sm">
                                         <Settings className="size-4 shrink-0" />
                                     </div>

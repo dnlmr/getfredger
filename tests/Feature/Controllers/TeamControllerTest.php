@@ -42,3 +42,14 @@ it('can update team', function() {
 
     expect($user->fresh()->currentTeam->name)->toBe($name);
 });
+
+it('can not update if not in team', function() {
+    $user = User::factory()->create();
+    $anotherUser = User::factory()->create();
+
+    actingAs($user)
+        ->patch(route('team.update', $anotherUser->currentTeam), [
+            'name' => 'New Team Name'
+        ])
+        ->assertForbidden();
+});
