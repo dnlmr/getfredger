@@ -13,4 +13,8 @@ Route::middleware('auth', 'verified')->group(function () {
         ->name('team.edit');
     Route::patch('/team/{team}', [TeamController::class, 'update'])
         ->name('team.update');
+
+    // Leave team
+    Route::post('/team/{team}/leave', [TeamController::class, 'leave'])
+        ->name('team.leave');
 });

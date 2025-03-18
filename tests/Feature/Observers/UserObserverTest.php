@@ -35,3 +35,10 @@ it('sets the current team to the personal team', function() {
     expect($user->current_team_id)
         ->toBe($user->teams->first()->id);
 });
+
+it('gives the admin role to personal team', function() {
+    $user = User::factory()->create();
+
+    expect($user->hasRole('team admin'))
+        ->toBeTrue();
+});

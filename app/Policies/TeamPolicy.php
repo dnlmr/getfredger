@@ -18,6 +18,15 @@ class TeamPolicy
             return false;
         }
 
-        return true;
+        return $user->can('update team');
+    }
+
+    public function leave(User $user, Team $team)
+    {
+        if(!$user->teams->contains($team)) {
+            return false;
+        }
+
+        return $user->teams->count() > 1;
     }
 }

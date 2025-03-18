@@ -1,5 +1,8 @@
 <?php
 
+use Database\Seeders\AdminRoleSeeder;
+use Database\Seeders\MemberRoleSeeder;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -13,7 +16,13 @@
 
 pest()->extend(Tests\TestCase::class)
     ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
-    ->in('Feature');
+    ->in('Feature')
+    ->beforeEach(function () {
+        $this->seed([
+            MemberRoleSeeder::class,
+            AdminRoleSeeder::class,
+        ]);
+    });
 
 /*
 |--------------------------------------------------------------------------

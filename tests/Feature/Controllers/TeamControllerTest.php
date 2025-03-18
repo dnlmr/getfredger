@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\TeamsPermission;
 use App\Models\Team;
 use App\Models\User;
 
@@ -53,3 +54,78 @@ it('can not update if not in team', function() {
         ])
         ->assertForbidden();
 });
+
+it('can not update a team without permission', function() {
+    $user = User::factory()->create();
+
+    $user->teams()->attach(
+        $anotherTeam  = Team::factory()->create()
+    );
+
+    setPermissionsTeamId($anotherTeam->id);
+
+    actingAs($user)
+        ->withoutMiddleware(TeamsPermission::class)
+        ->patch(route('team.update', $anotherTeam), [
+            'name' => 'New Team Name'
+        ])
+        ->assertForbidden();
+});
+
+
+it('can leave team', function() {
+    $user = User::factory()
+        ->has(Team::factory())
+        ->create();
+
+    $teamToLeave = $user->currentTeam;
+
+    actingAs($user)
+        ->post(route('team.leave', $teamToLeave))
+        ->assertRedirect('dashboard');
+
+    expect($user->fresh()->teams->contains($teamToLeave))->toBeFalse()
+        ->and($user->fresh()->currentTeam->id)->not->toEqual($teamToLeave->id);
+});
+
+it('can not leave the team if we have only one remaining', function() {
+    $user = User::factory()->create();
+
+    actingAs($user)
+        ->post(route('team.leave', $user->currentTeam))
+        ->assertForbidden();
+
+    expect($user->fresh()->teams->count())->toBe(1);
+});
+
+it('can not leave a team that we do not belong to', function() {
+    $user = User::factory()->create();
+    $anotherUser = User::factory()->create();
+
+    actingAs($user)
+        ->post(route('team.leave', $anotherUser->currentTeam))
+        ->assertForbidden();
+});
+
+it('should show a list of team members', function() {
+    $user = User::factory()->create();
+
+    $user->currentTeam->members()->attach(
+        $member = User::factory()->create()
+    );
+
+    actingAs($user)
+        ->get(route('team.members'))
+        ->assertInertia('team/members', [
+            'members' => [
+                [
+                    'id' => $member->id,
+                    'name' => $member->name,
+                    'email' => $member->email,
+                ]
+            ]
+        ]);
+
+
+
+})->skip();

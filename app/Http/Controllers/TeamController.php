@@ -7,8 +7,8 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\SetCurrentTeamRequest;
+use App\Http\Requests\TeamLeaveRequest;
 use App\Http\Requests\TeamUpdateRequest;
-use Illuminate\Support\Facades\Validator;
 
 class TeamController extends Controller
 {
@@ -30,6 +30,17 @@ class TeamController extends Controller
     {
         $team->update($request->only('name'));
 
-        return to_route('team.edit')->with('status', 'team-updated');
+        return to_route('team.edit')->withStatus('team-updated');
+    }
+
+    public function leave(TeamLeaveRequest $request, Team $team): RedirectResponse
+    {
+        $user = $request->user();
+
+        $user->teams()->detach($team);
+
+        $user->currentTeam()->associate($user->fresh()->teams->first())->save();
+
+        return to_route('dashboard');
     }
 }

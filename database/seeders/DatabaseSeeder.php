@@ -15,6 +15,12 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
+        // Rund AdminRoleSeeder and MemberRoleSeeder
+        $this->call([
+            AdminRoleSeeder::class,
+            MemberRoleSeeder::class,
+        ]);
+
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',

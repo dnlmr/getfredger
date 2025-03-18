@@ -11,12 +11,15 @@ class UserObserver
     {
         $user->teams()->attach([
             $team = Team::create([
-                'name' => $user->name,
+                'name' => $user->name . "'s team",
             ]),
         ]);
 
         $user->currentTeam()->associate($team);
         $user->save();
+
+        setPermissionsTeamId($team->id);
+        $user->assignRole('team admin');
     }
 
     public function deleting(User $user)
