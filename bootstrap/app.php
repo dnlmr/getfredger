@@ -18,10 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->encryptCookies(except: ['appearance']);
 
         $middleware->web(append: [
+            TeamsPermission::class,
             HandleAppearance::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
-            TeamsPermission::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

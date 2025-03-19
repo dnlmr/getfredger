@@ -9,7 +9,7 @@ import { type PropsWithChildren } from 'react';
 const sidebarNavItems: NavItem[] = [
     {
         title: 'Name',
-        url: '/team',
+        url: '/team/name',
         icon: null,
     },
     {

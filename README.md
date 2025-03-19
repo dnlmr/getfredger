@@ -32,3 +32,5 @@ Upload your invoice as an image or PDF and let Fredger do the rest. Fredger will
     - https://github.com/jonschlinkert/remarkable
     - https://github.com/opengovsg/pdf2md
     - pdfjs-dist
+
+- https://matthiasweiss.at/blog/bulletproofing-inertia-how-i-maximize-type-safety-in-laravel-monoliths/

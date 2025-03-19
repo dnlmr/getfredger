@@ -111,21 +111,17 @@ it('should show a list of team members', function() {
     $user = User::factory()->create();
 
     $user->currentTeam->members()->attach(
-        $member = User::factory()->create()
+        $members = User::factory()->times(2)->create()
     );
 
     actingAs($user)
-        ->get(route('team.members'))
-        ->assertInertia('team/members', [
-            'members' => [
-                [
-                    'id' => $member->id,
-                    'name' => $member->name,
-                    'email' => $member->email,
-                ]
-            ]
-        ]);
+        ->get(route('team.members', $user->currentTeam))
+        ->assertSeeText($members->first()->name)
+        ->assertSeeText($members->last()->name);
 
+        // ->assertInertia('team/members', [
+        //     'team' => $user->currentTeam,
+        //     'members' => $members
+        // ]);
 
-
-})->skip();
+})->todo('Refactor test when page is implemented');

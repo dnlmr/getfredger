@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Team settings',
-        href: '/team',
+        href: route('team.edit'),
     },
 ];
 

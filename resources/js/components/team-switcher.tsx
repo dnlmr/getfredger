@@ -85,7 +85,7 @@ export function TeamSwitcher() {
                                     <div className="flex size-6 items-center justify-center rounded-sm">
                                         <Settings className="size-4 shrink-0" />
                                     </div>
-                                    Settings
+                                    Team Settings
                                 </Link>
                             </DropdownMenuItem>
                         </DropdownMenuGroup>

@@ -12,7 +12,7 @@ it('creates a personal team when a user is created', function () {
 
     expect($user->teams)
         ->toHaveCount(1)
-        ->first()->name->toBe($user->name);
+        ->first()->name->toBe($user->name . "'s team");
 });
 
 it('removes all team attachments when deleted', function () {
