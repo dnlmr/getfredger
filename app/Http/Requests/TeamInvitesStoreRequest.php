@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class TeamInvitesStoreRequest extends FormRequest
@@ -11,7 +13,7 @@ class TeamInvitesStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->can('inviteToTeam', $this->team);
     }
 
     /**
@@ -27,7 +29,10 @@ class TeamInvitesStoreRequest extends FormRequest
                 'string',
                 'lowercase',
                 'email',
-                'max:255'],
+                'max:255',
+                Rule::unique('team_invites')
+                    ->where('team_id', $this->user()->currentTeam->id)
+            ],
         ];
     }
 }
