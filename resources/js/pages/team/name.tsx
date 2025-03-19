@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Team settings',
+        title: 'Team Name',
         href: route('team.edit'),
     },
 ];
@@ -46,7 +46,7 @@ export default function TeamName() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Team Settings" />
+            <Head title="Team Name" />
 
             <SettingsLayout>
                 <div className="space-y-6">

@@ -73,7 +73,7 @@ it('can not update a team without permission', function() {
 });
 
 
-it('can leave team', function() {
+it('can leave a team', function() {
     $user = User::factory()
         ->has(Team::factory())
         ->create();

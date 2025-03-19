@@ -46,12 +46,10 @@ class TeamController extends Controller
 
     public function members(Request $request)
     {
-        // Show a simple list of team members
-        return $request->user()->currentTeam->members;
+        // Show an Inertia page with a list of team members
+        return Inertia::render('team/members', [
+            'members' => $request->user()->currentTeam->members()->with('roles:name')->get()
+        ]);
 
-
-        // return Inertia::render('team/members', [
-        //     'team' => $request->user()->currentTeam
-        // ]);
     }
 }
