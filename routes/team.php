@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TeamMemberController;
+use App\Http\Controllers\TeamInviteController;
 
 Route::middleware('auth', 'verified')->group(function () {
 
@@ -23,4 +24,7 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::delete('/team/{team}/members/{user}', [TeamMemberController::class, 'destroy'])
         ->name('team.members.destroy');
 
+    // Team invitations
+    Route::post('/team/{team}/invites', [TeamInviteController::class, 'store'])
+        ->name('team.invites.store');
 });
