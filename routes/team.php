@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TeamMemberController;
 
 Route::middleware('auth', 'verified')->group(function () {
 
@@ -19,5 +20,7 @@ Route::middleware('auth', 'verified')->group(function () {
     // Team members
     Route::get('/team/members', [TeamController::class, 'members'])
         ->name('team.members');
+    Route::delete('/team/{team}/members/{user}', [TeamMemberController::class, 'destroy'])
+        ->name('team.members.destroy');
 
 });

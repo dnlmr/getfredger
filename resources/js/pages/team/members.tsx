@@ -1,11 +1,24 @@
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, usePage, router } from '@inertiajs/react';
 import HeadingSmall from '@/components/heading-small';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/team-settings/team-layout';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Trash } from "lucide-react";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -28,7 +41,11 @@ type Member = {
 };
 
 export default function TeamMembers() {
-    const { members } = usePage<SharedData & { members: Member[] }>().props;
+    const { members, auth } = usePage<SharedData & { members: Member[] }>().props;
+    const [memberToRemove, setMemberToRemove] = useState<Member | null>(null);
+    const [showRemoveDialog, setShowRemoveDialog] = useState(false);
+    const currentUser = auth.user;
+    const currentTeam = currentUser?.currentTeam;
 
     const getRoleBadge = (member: Member) => {
         // Check if member has roles
@@ -52,6 +69,36 @@ export default function TeamMembers() {
             .join('')
             .toUpperCase()
             .substring(0, 2);
+    };
+
+    const canRemoveMember = (member: Member) => {
+        // Can't remove yourself
+        if (member.id === currentUser?.id) {
+            return false;
+        }
+
+        // Check if user has permission to remove team members
+        return currentUser?.permissions?.includes('remove team members');
+    };
+
+    const handleRemoveMember = (member: Member) => {
+        setMemberToRemove(member);
+        setShowRemoveDialog(true);
+    };
+
+    const confirmRemoveMember = () => {
+        if (memberToRemove && currentTeam) {
+            router.delete(route('team.members.destroy', {
+                team: currentTeam.id,
+                user: memberToRemove.id
+            }), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setShowRemoveDialog(false);
+                    setMemberToRemove(null);
+                }
+            });
+        }
     };
 
     return (
@@ -82,8 +129,18 @@ export default function TeamMembers() {
                                                 <p className="text-sm text-neutral-500">{member.email}</p>
                                             </div>
                                         </div>
-                                        <div>
+                                        <div className="flex items-center gap-3">
                                             {getRoleBadge(member)}
+                                            {canRemoveMember(member) && (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => handleRemoveMember(member)}
+                                                    className="text-red-500 hover:text-red-700 hover:bg-red-100"
+                                                >
+                                                    <Trash className="size-5" />
+                                                </Button>
+                                            )}
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -92,6 +149,26 @@ export default function TeamMembers() {
                     </div>
                 </div>
             </SettingsLayout>
+
+            <AlertDialog open={showRemoveDialog} onOpenChange={setShowRemoveDialog}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Remove Team Member</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Are you sure you want to remove {memberToRemove?.name} from the team? This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={confirmRemoveMember}
+                            className="bg-red-500 hover:bg-red-600"
+                        >
+                            Remove
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </AppLayout>
     );
 }
