@@ -25,7 +25,7 @@ export const ResponsiveModal = ({ children, onOpenChange, open }: ResponsiveModa
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="hide-scrollbar max-h-[85vh] w-full overflow-y-auto border-none p-4 sm:p-12 sm:max-w-lg">{children}</DialogContent>
+            <DialogContent className="hide-scrollbar max-h-[85vh] w-full overflow-y-auto border-none p-4 sm:p-8 sm:max-w-lg">{children}</DialogContent>
         </Dialog>
     );
 };

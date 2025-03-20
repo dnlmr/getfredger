@@ -13,7 +13,7 @@ class TeamInviteController extends Controller
     public function store(TeamInvitesStoreRequest $request, Team $team)
     {
         $invite = $team->invites()->create([
-            'email' => request('email'),
+            'email' => $request->email,
             'token' => str()->random(30),
         ]);
 

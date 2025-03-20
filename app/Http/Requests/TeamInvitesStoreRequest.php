@@ -25,13 +25,13 @@ class TeamInvitesStoreRequest extends FormRequest
     {
         return [
             'email' => [
-                'required',
-                'string',
-                'lowercase',
-                'email',
-                'max:255',
-                Rule::unique('team_invites')
-                    ->where('team_id', $this->user()->currentTeam->id)
+            'required',
+            'string',
+            'lowercase',
+            'email',
+            'max:255',
+            Rule::unique('team_invites')
+                ->where('team_id', $this->user()->currentTeam->id),
             ],
         ];
     }

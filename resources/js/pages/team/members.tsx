@@ -26,7 +26,6 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -93,32 +92,30 @@ const InviteForm = () => {
     if (!canInvite) return null;
 
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle className="text-lg font-medium">Invite New Member</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="grid gap-2">
-                        <Label htmlFor="email">Email Address</Label>
-                        <div className="flex gap-2">
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="colleague@example.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                            />
-                            <Button type="submit" disabled={isSubmitting}>
-                                <UserPlus className="size-4 mr-2" />
-                                Invite
-                            </Button>
-                        </div>
+        <div>
+            <HeadingSmall
+                title="Invite New Member"
+            />
+            <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+                <div className="grid gap-2">
+                    <Label htmlFor="email">Email Address</Label>
+                    <div className="flex gap-2">
+                        <Input
+                            id="email"
+                            type="email"
+                            placeholder="colleague@example.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                        <Button type="submit" disabled={isSubmitting}>
+                            <UserPlus className="size-4 mr-2" />
+                            Invite
+                        </Button>
                     </div>
-                </form>
-            </CardContent>
-        </Card>
+                </div>
+            </form>
+        </div>
     );
 };
 
@@ -129,51 +126,49 @@ const PendingInvites = ({ invites, onRevokeInvite }: { invites: TeamInvite[], on
     if (!invites || invites.length === 0) return null;
 
     return (
-        <Card className="mt-6">
-            <CardHeader>
-                <CardTitle className="text-lg font-medium">Pending Invitations</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Email</TableHead>
-                            <TableHead>Sent</TableHead>
-                            <TableHead className="w-[100px]"></TableHead>
+        <div>
+            <HeadingSmall
+                title="Pending Invitations"
+            />
+            <Table className="mt-4">
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Sent</TableHead>
+                        <TableHead className="w-[100px]"></TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {invites.map((invite) => (
+                        <TableRow key={invite.id}>
+                            <TableCell>
+                                <div className="flex items-center gap-3">
+                                    <Avatar className="h-8 w-8">
+                                        <AvatarFallback>
+                                            <Mail className="size-4" />
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <span>{invite.email}</span>
+                                </div>
+                            </TableCell>
+                            <TableCell>{new Date(invite.created_at).toLocaleDateString()}</TableCell>
+                            <TableCell>
+                                {canRevokeInvites && (
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => onRevokeInvite(invite)}
+                                        className="text-red-500 hover:text-red-700 hover:bg-red-100"
+                                    >
+                                        <Trash className="size-4" />
+                                    </Button>
+                                )}
+                            </TableCell>
                         </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {invites.map((invite) => (
-                            <TableRow key={invite.id}>
-                                <TableCell>
-                                    <div className="flex items-center gap-3">
-                                        <Avatar className="h-8 w-8">
-                                            <AvatarFallback>
-                                                <Mail className="size-4" />
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <span>{invite.email}</span>
-                                    </div>
-                                </TableCell>
-                                <TableCell>{new Date(invite.created_at).toLocaleDateString()}</TableCell>
-                                <TableCell>
-                                    {canRevokeInvites && (
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => onRevokeInvite(invite)}
-                                            className="text-red-500 hover:text-red-700 hover:bg-red-100"
-                                        >
-                                            <Trash className="size-4" />
-                                        </Button>
-                                    )}
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </CardContent>
-        </Card>
+                    ))}
+                </TableBody>
+            </Table>
+        </div>
     );
 };
 
@@ -231,6 +226,7 @@ export default function TeamMembers() {
                 onSuccess: () => {
                     setShowRevokeDialog(false);
                     setInviteToRevoke(null);
+                    toast.success(`Invitation to ${inviteToRevoke.email} has been revoked`);
                 }
             });
         }
@@ -261,63 +257,65 @@ export default function TeamMembers() {
             <Head title="Team Members" />
 
             <SettingsLayout>
-                <div className="space-y-6">
-                    <HeadingSmall
-                        title="Team Members"
-                        description="Manage your team members and their roles"
-                    />
+                <div className="space-y-12">
+                    <div>
+                        <HeadingSmall
+                            title="Team Members"
+                            description="Manage your team members and their roles"
+                        />
 
-                    {!members || members.length === 0 ? (
-                        <p className="text-neutral-500">No members found in this team.</p>
-                    ) : (
-                        <div className="rounded-md border">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Member</TableHead>
-                                        <TableHead>Email</TableHead>
-                                        <TableHead>Role</TableHead>
-                                        <TableHead className="w-[100px]"></TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {members.map((member) => (
-                                        <TableRow key={member.id}>
-                                            <TableCell className="font-medium">
-                                                <div className="flex items-center gap-3">
-                                                    <Avatar className="h-8 w-8">
-                                                        <AvatarImage src={member.profile_photo_url} />
-                                                        <AvatarFallback>{getInitials(member.name)}</AvatarFallback>
-                                                    </Avatar>
-                                                    <span>{member.name}</span>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>{member.email}</TableCell>
-                                            <TableCell>{getRoleBadge(member)}</TableCell>
-                                            <TableCell>
-                                                {canRemoveMember(member.id) && (
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        onClick={() => handleRemoveMember(member)}
-                                                        className="text-red-500 hover:text-red-700 hover:bg-red-100"
-                                                    >
-                                                        <Trash className="size-4" />
-                                                    </Button>
-                                                )}
-                                            </TableCell>
+                        {!members || members.length === 0 ? (
+                            <p className="text-neutral-500 mt-4">No members found in this team.</p>
+                        ) : (
+                            <div className="mt-4">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Member</TableHead>
+                                            <TableHead>Email</TableHead>
+                                            <TableHead>Role</TableHead>
+                                            <TableHead className="w-[100px]"></TableHead>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </div>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {members.map((member) => (
+                                            <TableRow key={member.id}>
+                                                <TableCell className="font-medium">
+                                                    <div className="flex items-center gap-3">
+                                                        <Avatar className="h-8 w-8">
+                                                            <AvatarImage src={member.profile_photo_url} />
+                                                            <AvatarFallback>{getInitials(member.name)}</AvatarFallback>
+                                                        </Avatar>
+                                                        <span>{member.name}</span>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell>{member.email}</TableCell>
+                                                <TableCell>{getRoleBadge(member)}</TableCell>
+                                                <TableCell>
+                                                    {canRemoveMember(member.id) && (
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() => handleRemoveMember(member)}
+                                                            className="text-red-500 hover:text-red-700 hover:bg-red-100"
+                                                        >
+                                                            <Trash className="size-4" />
+                                                        </Button>
+                                                    )}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        )}
+                    </div>
+
+                    {invites && invites.length > 0 && (
+                        <PendingInvites invites={invites} onRevokeInvite={handleRevokeInvite} />
                     )}
 
-                    <PendingInvites invites={invites} onRevokeInvite={handleRevokeInvite} />
-
-                    <section className="pt-6">
-                        <InviteForm />
-                    </section>
+                    <InviteForm />
                 </div>
             </SettingsLayout>
 
