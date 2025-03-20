@@ -21,5 +21,7 @@ class AdminRoleSeeder extends Seeder
         $role->givePermissionTo(Permission::firstOrCreate(['name' => 'view team members']));
         $role->givePermissionTo(Permission::firstOrCreate(['name' => 'remove team members']));
         $role->givePermissionTo(Permission::firstOrCreate(['name' => 'invite team members']));
+        $role->givePermissionTo(Permission::firstOrCreate(['name' => 'revoke team invites']));
+
     }
 }

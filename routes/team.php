@@ -27,4 +27,6 @@ Route::middleware('auth', 'verified')->group(function () {
     // Team invitations
     Route::post('/team/{team}/invites', [TeamInviteController::class, 'store'])
         ->name('team.invites.store');
+    Route::delete('/team/{team}/invites/{teamInvite}', [TeamInviteController::class, 'destroy'])
+        ->name('team.invites.destroy');
 });

@@ -51,4 +51,13 @@ class TeamPolicy
 
         return $user->can('invite team members');
     }
+
+    public function revokeInvite(User $user, Team $team)
+    {
+        if($user->teams->doesntContain($team)) {
+            return false;
+        }
+
+        return $user->can('revoke team invites');
+    }
 }

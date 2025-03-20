@@ -9,15 +9,14 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Trash } from "lucide-react";
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogClose
+} from "@/components/ui/dialog";
 import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -150,25 +149,29 @@ export default function TeamMembers() {
                 </div>
             </SettingsLayout>
 
-            <AlertDialog open={showRemoveDialog} onOpenChange={setShowRemoveDialog}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Remove Team Member</AlertDialogTitle>
-                        <AlertDialogDescription>
+            <Dialog open={showRemoveDialog} onOpenChange={setShowRemoveDialog}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Remove Team Member</DialogTitle>
+                        <DialogDescription>
                             Are you sure you want to remove {memberToRemove?.name} from the team? This action cannot be undone.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button variant="outline">
+                                Cancel
+                            </Button>
+                        </DialogClose>
+                        <Button
+                            variant="destructive"
                             onClick={confirmRemoveMember}
-                            className="bg-red-500 hover:bg-red-600"
                         >
                             Remove
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </AppLayout>
     );
 }

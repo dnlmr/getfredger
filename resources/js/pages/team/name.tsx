@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/team-settings/team-layout';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -100,7 +100,7 @@ export default function TeamName() {
                             <DialogTrigger asChild>
                                 <Button variant="destructive">Leave Team</Button>
                             </DialogTrigger>
-                            <DialogContent className="sm:max-w-[425px]">
+                            <DialogContent>
                                 <DialogHeader>
                                     <DialogTitle>Are you sure you want to leave this team?</DialogTitle>
                                     <DialogDescription>
@@ -109,9 +109,11 @@ export default function TeamName() {
                                     </DialogDescription>
                                 </DialogHeader>
                                 <DialogFooter>
-                                    <Button variant="outline" onClick={() => setConfirmLeaveOpen(false)}>
-                                        Cancel
-                                    </Button>
+                                    <DialogClose asChild>
+                                        <Button variant="outline">
+                                            Cancel
+                                        </Button>
+                                    </DialogClose>
                                     <Button
                                         variant="destructive"
                                         onClick={leaveTeam}

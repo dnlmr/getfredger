@@ -87,3 +87,40 @@ it('fails to send invite without permission', function () {
         ])
         ->assertForbidden();
 });
+
+it('can revoke an invite', function() {
+    $user = User::factory()->create();
+
+    $invite = TeamInvite::factory()
+        ->for($user->currentTeam)
+        ->create();
+
+    actingAs($user)
+        ->delete(route('team.invites.destroy', [$user->currentTeam, $invite]))
+        ->assertRedirect(route('team.members'));
+
+    $this->assertDatabaseMissing('team_invites', [
+        'id' => $invite->id,
+        'team_id' => $user->currentTeam->id,
+        'email' => $invite->email,
+    ]);
+});
+
+it('can not revoke an invite without permission', function() {
+    $user = User::factory()->create();
+
+    $user->teams()->attach(
+        $anotherTeam = Team::factory()->create()
+    );
+
+    $invite = TeamInvite::factory()
+        ->for($user->currentTeam)
+        ->create();
+
+    setPermissionsTeamId($anotherTeam->id);
+
+    actingAs($user)
+        ->withoutMiddleware(TeamsPermission::class)
+        ->delete(route('team.invites.destroy', [$anotherTeam, $invite]))
+        ->assertForbidden();
+});
