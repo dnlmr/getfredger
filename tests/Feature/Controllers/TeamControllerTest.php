@@ -3,6 +3,7 @@
 use App\Http\Middleware\TeamsPermission;
 use App\Models\Team;
 use App\Models\User;
+use Inertia\Testing\AssertableInertia;
 
 use function Pest\Laravel\actingAs;
 
@@ -116,12 +117,9 @@ it('should show a list of team members', function() {
 
     actingAs($user)
         ->get(route('team.members', $user->currentTeam))
-        ->assertSeeText($members->first()->name)
-        ->assertSeeText($members->last()->name);
-
-        // ->assertInertia('team/members', [
-        //     'team' => $user->currentTeam,
-        //     'members' => $members
-        // ]);
-
-})->todo('Refactor test when page is implemented');
+        ->assertInertia(fn (AssertableInertia $page) => $page
+            ->component('team/members')
+            ->has('members', 3)
+            ->where('members.0.name', $user->name)
+        );
+});
