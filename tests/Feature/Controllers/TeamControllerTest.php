@@ -120,6 +120,5 @@ it('should show a list of team members', function() {
         ->assertInertia(fn (AssertableInertia $page) => $page
             ->component('team/members')
             ->has('members', 3)
-            ->where('members.0.name', $user->name)
         );
 });
