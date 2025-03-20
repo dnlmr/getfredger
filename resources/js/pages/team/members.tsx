@@ -9,15 +9,13 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Trash } from "lucide-react";
 import {
-    Dialog,
-    DialogContent,
     DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogClose
 } from "@/components/ui/dialog";
 import { useState } from 'react';
+import { ResponsiveModal } from '@/components/responsive-modal';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -149,29 +147,28 @@ export default function TeamMembers() {
                 </div>
             </SettingsLayout>
 
-            <Dialog open={showRemoveDialog} onOpenChange={setShowRemoveDialog}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Remove Team Member</DialogTitle>
-                        <DialogDescription>
-                            Are you sure you want to remove {memberToRemove?.name} from the team? This action cannot be undone.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter>
-                        <DialogClose asChild>
-                            <Button variant="outline">
-                                Cancel
-                            </Button>
-                        </DialogClose>
-                        <Button
-                            variant="destructive"
-                            onClick={confirmRemoveMember}
-                        >
-                            Remove
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+            <ResponsiveModal open={showRemoveDialog} onOpenChange={setShowRemoveDialog}>
+                <DialogHeader>
+                    <DialogTitle>Remove Team Member</DialogTitle>
+                    <DialogDescription>
+                        Are you sure you want to remove {memberToRemove?.name} from the team? This action cannot be undone.
+                    </DialogDescription>
+                </DialogHeader>
+                <DialogFooter className="mt-6">
+                    <Button
+                        variant="outline"
+                        onClick={() => setShowRemoveDialog(false)}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        variant="destructive"
+                        onClick={confirmRemoveMember}
+                    >
+                        Remove
+                    </Button>
+                </DialogFooter>
+            </ResponsiveModal>
         </AppLayout>
     );
 }

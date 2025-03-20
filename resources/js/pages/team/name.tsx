@@ -9,7 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/team-settings/team-layout';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
+import { DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ResponsiveModal } from '@/components/responsive-modal';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -96,11 +97,10 @@ export default function TeamName() {
                             <p className="text-sm">Please proceed with caution, this cannot be undone.</p>
                         </div>
 
-                        <Dialog open={confirmLeaveOpen} onOpenChange={setConfirmLeaveOpen}>
-                            <DialogTrigger asChild>
-                                <Button variant="destructive">Leave Team</Button>
-                            </DialogTrigger>
-                            <DialogContent>
+                        <Button variant="destructive" onClick={() => setConfirmLeaveOpen(true)}>Leave Team</Button>
+
+                        <ResponsiveModal open={confirmLeaveOpen} onOpenChange={setConfirmLeaveOpen}>
+                            <div className="p-4ZZZ sm:p-6ZZZ">
                                 <DialogHeader>
                                     <DialogTitle>Are you sure you want to leave this team?</DialogTitle>
                                     <DialogDescription>
@@ -108,12 +108,13 @@ export default function TeamName() {
                                         This action cannot be undone.
                                     </DialogDescription>
                                 </DialogHeader>
-                                <DialogFooter>
-                                    <DialogClose asChild>
-                                        <Button variant="outline">
-                                            Cancel
-                                        </Button>
-                                    </DialogClose>
+                                <DialogFooter className="mt-6">
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => setConfirmLeaveOpen(false)}
+                                    >
+                                        Cancel
+                                    </Button>
                                     <Button
                                         variant="destructive"
                                         onClick={leaveTeam}
@@ -121,8 +122,8 @@ export default function TeamName() {
                                         Leave Team
                                     </Button>
                                 </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
+                            </div>
+                        </ResponsiveModal>
                     </div>
                 </div>
             </SettingsLayout>
