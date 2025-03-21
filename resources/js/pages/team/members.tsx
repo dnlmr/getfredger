@@ -110,7 +110,7 @@ const InviteForm = () => {
                         />
                         <Button type="submit" disabled={isSubmitting}>
                             <UserPlus className="size-4 mr-2" />
-                            Invite
+                            Invite Member
                         </Button>
                     </div>
                 </div>
@@ -236,7 +236,7 @@ export default function TeamMembers() {
         if (member.roles?.some(role => role.name === 'team admin')) {
             return <Badge className="bg-lime-400/20 text-lime-700 dark:bg-lime-400/10 dark:text-lime-300">Admin</Badge>;
         }
-        return <Badge>Member</Badge>;
+        return <Badge className="bg-sky-400/20 text-sky-700 dark:bg-sky-400/10 dark:text-sky-300">Member</Badge>;
     };
 
     const getInitials = (name: string) => {
