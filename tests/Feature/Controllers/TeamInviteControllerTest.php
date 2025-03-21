@@ -172,7 +172,7 @@ it('can accept an invite', function() {
 
     expect($acceptingUser->teams->contains($invite->team))->toBeTrue()
         ->and($acceptingUser->hasRole('team member'))->toBeTrue()
-        ->and($acceptingUser->currentTeam->is($invite->team))->toBeTrue();;
+        ->and($acceptingUser->currentTeam->is($invite->team))->toBeTrue();
 
     assertDatabaseMissing('team_invites', [
         'id' => $invite->id,
