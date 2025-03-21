@@ -24,8 +24,8 @@ class TeamInvitation extends Mailable
     {
         $this->url = URL::temporarySignedRoute(
             'team.invites.accept',
-            now()->addWeek(),
-            ['token' => $teamInvite->token]
+            now()->addDays(3),
+            ['token' => $this->teamInvite->token]
         );
     }
 

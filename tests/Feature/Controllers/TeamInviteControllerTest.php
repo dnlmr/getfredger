@@ -6,8 +6,10 @@ use App\Models\TeamInvite;
 use function Pest\Laravel\actingAs;
 use App\Http\Middleware\TeamsPermission;
 use App\Mail\TeamInvitation;
+use Illuminate\Routing\Middleware\ValidateSignature;
 
 use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertDatabaseMissing;
 
 afterEach(function () {
     Str::createRandomStringsNormally();
@@ -132,4 +134,50 @@ it('can not revoke an invite without permission', function() {
         ->withoutMiddleware(TeamsPermission::class)
         ->delete(route('team.invites.destroy', [$anotherTeam, $invite]))
         ->assertForbidden();
+});
+
+it('fails to accept if route is not signed', function() {
+    $invite = TeamInvite::factory()
+        ->for(Team::factory()->create())
+        ->create();
+
+    $acceptingUser = User::factory()->create();
+
+    actingAs($acceptingUser)
+        ->get('/team/invites/accept?token=' . $invite->token)
+        ->assertForbidden();
+});
+
+it('can accept an invite', function() {
+    $invite = TeamInvite::factory()
+        ->for(Team::factory()->create())
+        ->create();
+
+    $acceptingUser = User::factory()->create();
+
+    assertDatabaseHas('team_invites', [
+        'id' => $invite->id,
+        'team_id' => $invite->team_id,
+        'token' => $invite->token,
+        'email' => $invite->email,
+    ]);
+
+    actingAs($acceptingUser)
+        ->withoutMiddleware(ValidateSignature::class)
+        ->get('/team/invites/accept?token=' . $invite->token)
+        ->assertRedirect(route('dashboard'));
+
+    // Refresh the user model to get the updated relationships
+    $acceptingUser->refresh();
+
+    expect($acceptingUser->teams->contains($invite->team))->toBeTrue()
+        ->and($acceptingUser->hasRole('team member'))->toBeTrue()
+        ->and($acceptingUser->currentTeam->is($invite->team))->toBeTrue();;
+
+    assertDatabaseMissing('team_invites', [
+        'id' => $invite->id,
+        'team_id' => $invite->team_id,
+        'token' => $invite->token,
+        'email' => $invite->email,
+    ]);
 });
