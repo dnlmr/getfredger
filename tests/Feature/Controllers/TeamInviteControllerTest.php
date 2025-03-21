@@ -5,6 +5,8 @@ use App\Models\User;
 use App\Models\TeamInvite;
 use function Pest\Laravel\actingAs;
 use App\Http\Middleware\TeamsPermission;
+use App\Mail\TeamInvitation;
+
 use function Pest\Laravel\assertDatabaseHas;
 
 afterEach(function () {
@@ -12,6 +14,8 @@ afterEach(function () {
 });
 
 it('creates an invite', function () {
+    Mail::fake();
+
     $user = User::factory()->create();
 
     Str::createRandomStringsUsing(fn () => 'abc');
@@ -21,6 +25,11 @@ it('creates an invite', function () {
             'email' => $email = 'invite@example.com'
         ])
         ->assertRedirect();
+
+    Mail::assertSent(TeamInvitation::class, function (TeamInvitation $mail) use ($email) {
+        return  $mail->hasTo($email) &&
+                $mail->teamInvite->token === 'abc';
+    });
 
     assertDatabaseHas('team_invites', [
         'team_id' => $user->currentTeam->id,

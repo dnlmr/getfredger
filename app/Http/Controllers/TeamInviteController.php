@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\TeamInvitesDestroyRequest;
-use App\Http\Requests\TeamInvitesStoreRequest;
 use App\Models\Team;
 use App\Models\TeamInvite;
+use App\Mail\TeamInvitation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Http\Requests\TeamInvitesStoreRequest;
+use App\Http\Requests\TeamInvitesDestroyRequest;
 
 class TeamInviteController extends Controller
 {
@@ -17,6 +19,8 @@ class TeamInviteController extends Controller
             'token' => str()->random(30),
         ]);
 
+        Mail::to($request->email)->send(new TeamInvitation($invite));
+
         return redirect()->route('team.members')->withStatus('invite-sent');
     }
 
@@ -25,5 +29,10 @@ class TeamInviteController extends Controller
         $teamInvite->delete();
 
         return redirect()->route('team.members')->withStatus('invite-revoked');
+    }
+
+    public function accept(Request $request)
+    {
+        dd($request->token);
     }
 }

@@ -29,4 +29,7 @@ Route::middleware('auth', 'verified')->group(function () {
         ->name('team.invites.store');
     Route::delete('/team/{team}/invites/{teamInvite}', [TeamInviteController::class, 'destroy'])
         ->name('team.invites.destroy');
+    Route::get('/team/invites/accept', [TeamInviteController::class, 'accept'])
+        ->name('team.invites.accept')
+        ->middleware('signed');
 });
