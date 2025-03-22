@@ -22,6 +22,7 @@ class RoleSeeder extends Seeder
                 'remove team members',
                 'invite team members',
                 'revoke team invites',
+                'change member role',
             ],
             'team member' => [
                 'view team members',

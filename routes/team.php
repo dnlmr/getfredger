@@ -32,4 +32,8 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::get('/team/invites/accept', [TeamInviteController::class, 'accept'])
         ->name('team.invites.accept')
         ->middleware('signed');
+
+    // Team roles
+    Route::patch('/team/{team}/members/{user}', [TeamMemberController::class, 'update'])
+        ->name('team.members.update');
 });

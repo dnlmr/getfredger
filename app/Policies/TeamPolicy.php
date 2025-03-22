@@ -60,4 +60,17 @@ class TeamPolicy
 
         return $user->can('revoke team invites');
     }
+
+    public function changeMemberRole(User $user, Team $team, User $member)
+    {
+        // if($user->teams->doesntContain($team)) {
+        //     return false;
+        // }
+
+        // if($team->members->doesntContain($member)) {
+        //     return false;
+        // }
+
+        return $user->can('change member role');
+    }
 }

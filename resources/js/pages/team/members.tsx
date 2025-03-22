@@ -143,7 +143,7 @@ const PendingInvites = ({ invites, onRevokeInvite }: { invites: TeamInvite[], on
                         <TableRow key={invite.id}>
                             <TableCell>
                                 <div className="flex items-center gap-3">
-                                    <Avatar className="h-8 w-8">
+                                    <Avatar className="size-8">
                                         <AvatarFallback>
                                             <Mail className="size-4" />
                                         </AvatarFallback>

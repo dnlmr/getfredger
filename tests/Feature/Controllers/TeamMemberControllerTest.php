@@ -51,3 +51,50 @@ it('can not remove self from the team', function() {
 
     expect($user->fresh()->currentTeam->members->contains($user))->toBeTrue();
 });
+
+it('updates a role', function() {
+    $user = User::factory()->create();
+
+    $user->currentTeam->members()->attach(
+        $member = User::factory()->createQuietly()
+    );
+
+    setPermissionsTeamId($user->currentTeam->id);
+
+    $member->assignRole('team member');
+
+    actingAs($user)
+        ->patch(route('team.members.update', [$user->currentTeam, $member]), [
+            'role' => 'team admin'
+        ])
+        ->assertRedirect();
+
+    $member->refresh();
+
+    expect($member->hasRole('team member'))->toBeFalse()
+        ->and($member->hasRole('team admin'))->toBeTrue()
+        ->and($member->roles->count())->toBe(1);
+});
+
+it('only updates role if provided', function() {
+
+    $user = User::factory()->create();
+
+    $user->currentTeam->members()->attach(
+        $member = User::factory()->createQuietly()
+    );
+
+    setPermissionsTeamId($user->currentTeam->id);
+    $member->assignRole('team member');
+
+    actingAs($user)
+        ->patch(route('team.members.update', [$user->currentTeam, $member]), [
+            // No role update provided
+        ])
+        ->assertRedirect();
+
+    $member->refresh();
+
+    expect($member->hasRole('team member'))->toBeTrue()
+        ->and($member->roles->count())->toBe(1);
+});
