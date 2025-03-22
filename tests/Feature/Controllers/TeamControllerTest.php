@@ -21,7 +21,7 @@ it('switches the current team for the user', function () {
     expect($user->currentTeam->id)->toBe($team->id);
 });
 
-it('can not switch to a team that the user does not belong to', function() {
+it('can not switch to a team that the user does not belong to', function () {
     $user = User::factory()->create();
 
     $anotherTeam = Team::factory()->create();
@@ -33,34 +33,34 @@ it('can not switch to a team that the user does not belong to', function() {
     expect($user->currentTeam->id)->not->toBe($anotherTeam->id);
 });
 
-it('can update team', function() {
+it('can update team', function () {
     $user = User::factory()->create();
 
     actingAs($user)
         ->patch(route('team.update', $user->currentTeam), [
-            'name' => $name = 'New Team Name'
+            'name' => $name = 'New Team Name',
         ])
         ->assertRedirect();
 
     expect($user->fresh()->currentTeam->name)->toBe($name);
 });
 
-it('can not update if not in team', function() {
+it('can not update if not in team', function () {
     $user = User::factory()->create();
     $anotherUser = User::factory()->create();
 
     actingAs($user)
         ->patch(route('team.update', $anotherUser->currentTeam), [
-            'name' => 'New Team Name'
+            'name' => 'New Team Name',
         ])
         ->assertForbidden();
 });
 
-it('can not update a team without permission', function() {
+it('can not update a team without permission', function () {
     $user = User::factory()->create();
 
     $user->teams()->attach(
-        $anotherTeam  = Team::factory()->create()
+        $anotherTeam = Team::factory()->create()
     );
 
     setPermissionsTeamId($anotherTeam->id);
@@ -68,13 +68,12 @@ it('can not update a team without permission', function() {
     actingAs($user)
         ->withoutMiddleware(TeamsPermission::class)
         ->patch(route('team.update', $anotherTeam), [
-            'name' => 'New Team Name'
+            'name' => 'New Team Name',
         ])
         ->assertForbidden();
 });
 
-
-it('can leave a team', function() {
+it('can leave a team', function () {
     $user = User::factory()
         ->has(Team::factory())
         ->create();
@@ -89,7 +88,7 @@ it('can leave a team', function() {
         ->and($user->fresh()->currentTeam->id)->not->toEqual($teamToLeave->id);
 });
 
-it('can not leave the team if we have only one remaining', function() {
+it('can not leave the team if we have only one remaining', function () {
     $user = User::factory()->create();
 
     actingAs($user)
@@ -99,7 +98,7 @@ it('can not leave the team if we have only one remaining', function() {
     expect($user->fresh()->teams->count())->toBe(1);
 });
 
-it('can not leave a team that we do not belong to', function() {
+it('can not leave a team that we do not belong to', function () {
     $user = User::factory()->create();
     $anotherUser = User::factory()->create();
 
@@ -108,7 +107,7 @@ it('can not leave a team that we do not belong to', function() {
         ->assertForbidden();
 });
 
-it('should show a list of team members', function() {
+it('should show a list of team members', function () {
     $user = User::factory()->create();
 
     $user->currentTeam->members()->attach(

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TeamInvitesDestroyRequest;
+use App\Http\Requests\TeamInvitesStoreRequest;
+use App\Mail\TeamInvitation;
 use App\Models\Team;
 use App\Models\TeamInvite;
-use App\Mail\TeamInvitation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use App\Http\Requests\TeamInvitesStoreRequest;
-use App\Http\Requests\TeamInvitesDestroyRequest;
 
 class TeamInviteController extends Controller
 {
@@ -44,7 +44,6 @@ class TeamInviteController extends Controller
         $request->user()->currentTeam()->associate($invite->team)->save();
 
         $invite->delete();
-
 
         return redirect()->route('dashboard')->withStatus('invite-accepted');
     }

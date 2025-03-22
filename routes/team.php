@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TeamController;
-use App\Http\Controllers\TeamMemberController;
 use App\Http\Controllers\TeamInviteController;
+use App\Http\Controllers\TeamMemberController;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth', 'verified')->group(function () {
 

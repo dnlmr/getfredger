@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TeamMemberDestroyRequest;
+use App\Http\Requests\TeamMemberUpdateRequest;
 use App\Models\Team;
 use App\Models\User;
-use Illuminate\Http\Request;
-use App\Http\Requests\TeamMemberDestroyRequest;
 
 class TeamMemberController extends Controller
 {
@@ -18,9 +18,9 @@ class TeamMemberController extends Controller
         return redirect()->route('team.members')->with('status', 'member-removed');
     }
 
-    public function update(Request $request, Team $team, User $user)
+    public function update(TeamMemberUpdateRequest $request, Team $team, User $user)
     {
-        if($request->has('role')) {
+        if ($request->has('role')) {
             tap($team->members->find($user), function (User $member) use ($request) {
                 $member->roles()->detach();
                 $member->assignRole($request->role);

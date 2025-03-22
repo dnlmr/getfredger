@@ -14,7 +14,7 @@ class TeamPolicy
 
     public function update(User $user, Team $team)
     {
-        if (!$user->teams->contains($team)) {
+        if (! $user->teams->contains($team)) {
             return false;
         }
 
@@ -23,7 +23,7 @@ class TeamPolicy
 
     public function leave(User $user, Team $team)
     {
-        if(!$user->teams->contains($team)) {
+        if (! $user->teams->contains($team)) {
             return false;
         }
 
@@ -36,7 +36,7 @@ class TeamPolicy
             return false;
         }
 
-        if($team->members->doesntContain($member)) {
+        if ($team->members->doesntContain($member)) {
             return false;
         }
 
@@ -45,7 +45,7 @@ class TeamPolicy
 
     public function inviteToTeam(User $user, Team $team)
     {
-        if($user->teams->doesntContain($team)) {
+        if ($user->teams->doesntContain($team)) {
             return false;
         }
 
@@ -54,7 +54,7 @@ class TeamPolicy
 
     public function revokeInvite(User $user, Team $team)
     {
-        if($user->teams->doesntContain($team)) {
+        if ($user->teams->doesntContain($team)) {
             return false;
         }
 
@@ -67,9 +67,9 @@ class TeamPolicy
         //     return false;
         // }
 
-        // if($team->members->doesntContain($member)) {
-        //     return false;
-        // }
+        if ($team->members->doesntContain($member)) {
+            return false;
+        }
 
         return $user->can('change member role');
     }

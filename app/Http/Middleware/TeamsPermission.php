@@ -15,7 +15,7 @@ class TeamsPermission
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if($user = auth()->user()) {
+        if ($user = auth()->user()) {
             setPermissionsTeamId($user->currentTeam->id);
         }
 

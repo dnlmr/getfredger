@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Team;
-use Inertia\Inertia;
-use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\SetCurrentTeamRequest;
 use App\Http\Requests\TeamLeaveRequest;
 use App\Http\Requests\TeamUpdateRequest;
+use App\Models\Team;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class TeamController extends Controller
 {
@@ -22,7 +22,7 @@ class TeamController extends Controller
     public function edit(Request $request)
     {
         return Inertia::render('team/name', [
-            'team' => $request->user()->currentTeam
+            'team' => $request->user()->currentTeam,
         ]);
     }
 
@@ -49,7 +49,7 @@ class TeamController extends Controller
         // Show an Inertia page with a list of team members
         return Inertia::render('team/members', [
             'members' => $request->user()->currentTeam->members()->with('roles:name')->get(),
-            'invites' => $request->user()->currentTeam->invites
+            'invites' => $request->user()->currentTeam->invites,
         ]);
     }
 }

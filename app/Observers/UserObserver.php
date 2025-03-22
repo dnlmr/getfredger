@@ -11,7 +11,7 @@ class UserObserver
     {
         $user->teams()->attach([
             $team = Team::create([
-                'name' => $user->name . "'s team",
+                'name' => $user->name."'s team",
             ]),
         ]);
 

@@ -22,7 +22,7 @@ it('can remove a member from the team', function () {
         ->and($member->fresh()->currentTeam->id)->not->toEqual($user->currentTeam->id);
 });
 
-it('can not remove a member from the team without permission', function() {
+it('can not remove a member from the team without permission', function () {
     $user = User::factory()->create();
 
     $anotherUser = User::factory()->create();
@@ -38,11 +38,10 @@ it('can not remove a member from the team without permission', function() {
         ->delete(route('team.members.destroy', [$user->currentTeam, $member]))
         ->assertForbidden();
 
-
     expect($user->fresh()->currentTeam->members->contains($member))->toBeTrue();
 });
 
-it('can not remove self from the team', function() {
+it('can not remove self from the team', function () {
     $user = User::factory()->create();
 
     actingAs($user)
@@ -52,7 +51,7 @@ it('can not remove self from the team', function() {
     expect($user->fresh()->currentTeam->members->contains($user))->toBeTrue();
 });
 
-it('updates a role', function() {
+it('updates a role', function () {
     $user = User::factory()->create();
 
     $user->currentTeam->members()->attach(
@@ -65,7 +64,7 @@ it('updates a role', function() {
 
     actingAs($user)
         ->patch(route('team.members.update', [$user->currentTeam, $member]), [
-            'role' => 'team admin'
+            'role' => 'team admin',
         ])
         ->assertRedirect();
 
@@ -76,7 +75,7 @@ it('updates a role', function() {
         ->and($member->roles->count())->toBe(1);
 });
 
-it('only updates role if provided', function() {
+it('only updates role if provided', function () {
 
     $user = User::factory()->create();
 
@@ -97,4 +96,52 @@ it('only updates role if provided', function() {
 
     expect($member->hasRole('team member'))->toBeTrue()
         ->and($member->roles->count())->toBe(1);
+});
+
+it('can not update role without permission', function () {
+
+    $user = User::factory()->create();
+
+    $user->currentTeam->members()->attach(
+        $anotherUser = User::factory()->create()
+    );
+
+    setPermissionsTeamId($user->currentTeam->id);
+    $anotherUser->assignRole('team member');
+
+    actingAs($anotherUser)
+        ->withoutMiddleware(TeamsPermission::class)
+        ->patch(route('team.members.update', [$user->currentTeam, $user]), [
+            'role' => 'team member',
+        ])
+        ->assertForbidden();
+});
+
+it('does not update the user if they are not in the team', function () {
+    $user = User::factory()->create();
+    $anotherUser = User::factory()->create();
+
+    actingAs($user)
+        ->patch(route('team.members.update', [$user->currentTeam, $anotherUser]), [
+            'role' => 'team member',
+        ])
+        ->assertForbidden();
+});
+
+it('validates the role to make sure it exists', function () {
+    $user = User::factory()->create();
+
+    $user->currentTeam->members()->attach(
+        $member = User::factory()->create()
+    );
+
+    setPermissionsTeamId($user->currentTeam->id);
+    $member->assignRole('team member');
+
+    actingAs($user)
+        ->patch(route('team.members.update', [$user->currentTeam, $member]), [
+            'role' => 'some wrong role',
+        ])
+        ->assertInvalid()
+        ->assertSessionHasErrors(['role']);
 });

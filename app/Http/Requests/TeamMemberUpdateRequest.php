@@ -3,16 +3,15 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class TeamInvitesStoreRequest extends FormRequest
+class TeamMemberUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return $this->user()->can('inviteToTeam', $this->team);
+        return $this->user()->can('changeMemberRole', [$this->team, $this->user]);
     }
 
     /**
@@ -23,14 +22,10 @@ class TeamInvitesStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => [
+            'role' => [
                 'required',
                 'string',
-                'lowercase',
-                'email',
-                'max:255',
-                Rule::unique('team_invites')
-                    ->where('team_id', $this->user()->currentTeam->id),
+                'exists:roles,name',
             ],
         ];
     }
