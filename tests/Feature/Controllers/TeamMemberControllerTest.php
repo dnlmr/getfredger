@@ -12,14 +12,21 @@ it('can remove a member from the team', function () {
         $member = User::factory()->create()
     );
 
+    setPermissionsTeamId($user->currentTeam->id);
+
     $member->currentTeam()->associate($user->currentTeam)->save();
+    $member->assignRole('team admin');
 
     actingAs($user)
         ->delete(route('team.members.destroy', [$user->currentTeam, $member]))
         ->assertRedirect();
 
-    expect($user->fresh()->currentTeam->members->contains($member))->toBeFalse()
-        ->and($member->fresh()->currentTeam->id)->not->toEqual($user->currentTeam->id);
+    $user->refresh();
+    $member->refresh();
+
+    expect($user->currentTeam->members->contains($member))->toBeFalse()
+        ->and($member->currentTeam->id)->not->toEqual($user->currentTeam->id)
+        ->and($member->roles->count())->toBe(0);
 });
 
 it('can not remove a member from the team without permission', function () {

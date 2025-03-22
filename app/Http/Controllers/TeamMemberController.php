@@ -14,6 +14,7 @@ class TeamMemberController extends Controller
         $team->members()->detach($user);
 
         $user->currentTeam()->associate($user->fresh()->teams->first())->save();
+        $user->roles()->detach();
 
         return redirect()->route('team.members')->with('status', 'member-removed');
     }
