@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use App\Models\User;
 
 class TeamInvitesStoreRequest extends FormRequest
 {
@@ -25,6 +25,11 @@ class TeamInvitesStoreRequest extends FormRequest
     {
         $teamId = $this->user()->currentTeam->id;
 
+        // Get emails of users already on this team
+        $existingTeamEmails = User::whereHas('teams', function ($query) use ($teamId) {
+            $query->where('teams.id', $teamId);
+        })->pluck('email')->toArray();
+
         return [
             'email' => [
                 'required',
@@ -32,16 +37,21 @@ class TeamInvitesStoreRequest extends FormRequest
                 'lowercase',
                 'email',
                 'max:255',
-                Rule::unique('team_invites')
-                    ->where('team_id', $teamId),
-                function ($attribute, $value, $fail) use ($teamId) {
-                    // Check if the email belongs to a user who is already on the team
-                    $user = User::where('email', $value)->first();
-                    if ($user && $user->teams()->where('teams.id', $teamId)->exists()) {
-                        $fail('The user with this email is already a member of the team.');
-                    }
-                },
+                Rule::unique('team_invites')->where('team_id', $teamId),
+                Rule::notIn($existingTeamEmails),
             ],
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'email.not_in' => 'The user with this email is already a member of the team.',
         ];
     }
 }
