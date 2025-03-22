@@ -40,12 +40,12 @@ it('creates an invite', function () {
     ]);
 });
 
-it('requires an email address', function () {
+it('requires a valid email address', function () {
     $user = User::factory()->create();
 
     actingAs($user)
         ->post(route('team.invites.store', $user->currentTeam), [
-            'email' => '',
+            'email' => 'abc',
         ])
         ->assertSessionHasErrors('email');
 });

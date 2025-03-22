@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Models\User;
 
 class TeamInvitesStoreRequest extends FormRequest
 {
@@ -22,6 +23,8 @@ class TeamInvitesStoreRequest extends FormRequest
      */
     public function rules(): array
     {
+        $teamId = $this->user()->currentTeam->id;
+
         return [
             'email' => [
                 'required',
@@ -30,7 +33,14 @@ class TeamInvitesStoreRequest extends FormRequest
                 'email',
                 'max:255',
                 Rule::unique('team_invites')
-                    ->where('team_id', $this->user()->currentTeam->id),
+                    ->where('team_id', $teamId),
+                function ($attribute, $value, $fail) use ($teamId) {
+                    // Check if the email belongs to a user who is already on the team
+                    $user = User::where('email', $value)->first();
+                    if ($user && $user->teams()->where('teams.id', $teamId)->exists()) {
+                        $fail('The user with this email is already a member of the team.');
+                    }
+                },
             ],
         ];
     }
