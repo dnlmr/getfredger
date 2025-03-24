@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SetCurrentTeamRequest;
 use App\Http\Requests\TeamLeaveRequest;
+use App\Http\Requests\TeamStoreRequest;
 use App\Http\Requests\TeamUpdateRequest;
 use App\Models\Team;
 use Illuminate\Http\RedirectResponse;
@@ -24,6 +25,22 @@ class TeamController extends Controller
         return Inertia::render('team/name', [
             'team' => $request->user()->currentTeam,
         ]);
+    }
+
+    public function store(TeamStoreRequest $request)
+    {
+        $user = auth()->user();
+
+        $user->teams()->attach([
+            $team = Team::create($request->only('name')),
+        ]);
+
+        $user->currentTeam()->associate($team)->save();
+
+        setPermissionsTeamId($team->id);
+        $user->assignRole('team admin');
+
+        return redirect()->route('team.edit', $team)->withStatus('team-created');
     }
 
     public function update(TeamUpdateRequest $request, Team $team): RedirectResponse

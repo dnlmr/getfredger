@@ -121,3 +121,20 @@ it('should show a list of team members', function () {
             ->has('members', 3)
         );
 });
+
+it('can create a team', function() {
+
+    $user = User::factory()->create();
+
+    actingAs($user)
+        ->post(route('team.store'), [
+            'name' => $teamName = 'New Team',
+        ])
+        ->assertRedirect();
+
+    $user->refresh();
+
+    expect($user->teams)->toHaveCount(2)
+        ->last()->name->toBe($teamName)
+        ->and($user->currentTeam->name)->toBe($teamName);
+});
