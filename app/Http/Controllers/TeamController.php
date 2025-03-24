@@ -30,7 +30,7 @@ class TeamController extends Controller
     {
         $team->update($request->only('name'));
 
-        return to_route('team.edit')->withStatus('team-updated');
+        return redirect()->route('team.edit')->withStatus('team-updated');
     }
 
     public function leave(TeamLeaveRequest $request, Team $team): RedirectResponse

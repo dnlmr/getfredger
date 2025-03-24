@@ -7,8 +7,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth', 'verified')->group(function () {
 
-    Route::patch('/teams/{team}/current', [TeamController::class, 'setCurrent'])
+    Route::patch('/team/{team}/current', [TeamController::class, 'setCurrent'])
         ->name('team.current');
+
+    // Team creation
+    Route::get('/team/create', [TeamController::class, 'create'])
+        ->name('team.create');
+    Route::post('/team', [TeamController::class, 'store'])
+        ->name('team.store');
 
     // Team name
     Route::get('/team/name', [TeamController::class, 'edit'])
