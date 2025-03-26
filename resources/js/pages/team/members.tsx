@@ -333,7 +333,7 @@ export default function TeamMembers() {
                             )}
 
                             {isPersonalTeam && members && members.length > 0 && (
-                                <div className="absolute inset-0 bg-white/10 dark:bg-black/10 backdrop-blur-[1px]ZZZ rounded-lg"></div>
+                                <div className="absolute inset-0 bg-white/10 dark:bg-black/10 backdrop-blur-[1px] rounded-lg"></div>
                             )}
                         </div>
                     </div>
@@ -345,7 +345,7 @@ export default function TeamMembers() {
                             </div>
 
                             {isPersonalTeam && (
-                                <div className="absolute inset-0 bg-white/10 dark:bg-black/10 backdrop-blur-[1px]ZZZ -mb-1 rounded-lg"></div>
+                                <div className="absolute inset-0 bg-white/10 dark:bg-black/10 backdrop-blur-[1px] -mb-1 rounded-lg"></div>
                             )}
                         </div>
                     )}
@@ -356,7 +356,7 @@ export default function TeamMembers() {
                         </div>
 
                         {isPersonalTeam && (
-                            <div className="absolute inset-0 bg-white/10 dark:bg-black/10 backdrop-blur-[1px]ZZZ -mb-1 rounded-lg"></div>
+                            <div className="absolute inset-0 bg-white/10 dark:bg-black/10 backdrop-blur-[1px] -mb-1 rounded-lg"></div>
                         )}
                     </div>
                 </div>

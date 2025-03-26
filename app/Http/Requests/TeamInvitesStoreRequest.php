@@ -58,6 +58,7 @@ class TeamInvitesStoreRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'email.unique' => 'An invitation has already been sent to this email.',
             'email.not_in' => 'The user with this email is already a member of the team.',
         ];
     }
