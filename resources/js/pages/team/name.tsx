@@ -24,7 +24,7 @@ type TeamForm = {
 }
 
 export default function TeamName() {
-    const { team } = usePage<SharedData & { team: { id: number; name: string } }>().props;
+    const { team } = usePage<SharedData & { team: { id: number; name: string; personal_team: boolean } }>().props;
     const [confirmLeaveOpen, setConfirmLeaveOpen] = useState(false);
 
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm<Required<TeamForm>>({
@@ -85,47 +85,59 @@ export default function TeamName() {
                     </form>
                 </div>
 
-                <div className="mt-10 space-y-6">
-                    <HeadingSmall
-                        title="Leave Team"
-                        description="Permanently leave this team. This action cannot be undone."
-                    />
-
-                    <div className="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10">
-                        <div className="relative space-y-0.5 text-red-600 dark:text-red-100">
-                            <p className="font-medium">Warning</p>
-                            <p className="text-sm">Please proceed with caution, this cannot be undone.</p>
+                {team.personal_team ? (
+                    <div className="mt-10 space-y-6">
+                        <HeadingSmall
+                            title="Personal Team"
+                            description="This is your personal team and cannot be left or deleted."
+                        />
+                        <div className="rounded-lg border border-sky-100 bg-sky-50 p-4 text-sm text-sky-700 dark:border-sky-200/10 dark:bg-sky-700/10 dark:text-sky-100">
+                            <p>This team was created when you registered and serves as your personal workspace. Your personal team cannot be left or deleted.</p>
                         </div>
-
-                        <Button variant="destructive" onClick={() => setConfirmLeaveOpen(true)}>Leave Team</Button>
-
-                        <ResponsiveModal open={confirmLeaveOpen} onOpenChange={setConfirmLeaveOpen}>
-                            <div className="p-4ZZZ sm:p-6ZZZ">
-                                <DialogHeader>
-                                    <DialogTitle>Are you sure you want to leave this team?</DialogTitle>
-                                    <DialogDescription>
-                                        Once you leave a team, all of your access to this team's resources will be removed.
-                                        This action cannot be undone.
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <DialogFooter className="mt-6">
-                                    <Button
-                                        variant="outline"
-                                        onClick={() => setConfirmLeaveOpen(false)}
-                                    >
-                                        Cancel
-                                    </Button>
-                                    <Button
-                                        variant="destructive"
-                                        onClick={leaveTeam}
-                                    >
-                                        Leave Team
-                                    </Button>
-                                </DialogFooter>
-                            </div>
-                        </ResponsiveModal>
                     </div>
-                </div>
+                ) : (
+                    <div className="mt-10 space-y-6">
+                        <HeadingSmall
+                            title="Leave Team"
+                            description="Permanently leave this team. This action cannot be undone."
+                        />
+
+                        <div className="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10">
+                            <div className="relative space-y-0.5 text-red-600 dark:text-red-100">
+                                <p className="font-medium">Warning</p>
+                                <p className="text-sm">Please proceed with caution, this cannot be undone.</p>
+                            </div>
+
+                            <Button variant="destructive" onClick={() => setConfirmLeaveOpen(true)}>Leave Team</Button>
+
+                            <ResponsiveModal open={confirmLeaveOpen} onOpenChange={setConfirmLeaveOpen}>
+                                <div className="p-4ZZZ sm:p-6ZZZ">
+                                    <DialogHeader>
+                                        <DialogTitle>Are you sure you want to leave this team?</DialogTitle>
+                                        <DialogDescription>
+                                            Once you leave a team, all of your access to this team's resources will be removed.
+                                            This action cannot be undone.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <DialogFooter className="mt-6">
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => setConfirmLeaveOpen(false)}
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            variant="destructive"
+                                            onClick={leaveTeam}
+                                        >
+                                            Leave Team
+                                        </Button>
+                                    </DialogFooter>
+                                </div>
+                            </ResponsiveModal>
+                        </div>
+                    </div>
+                )}
             </SettingsLayout>
         </AppLayout>
     );
