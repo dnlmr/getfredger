@@ -33,4 +33,14 @@ class TeamFactory extends Factory
             'personal_team' => true,
         ]);
     }
+
+    /**
+     * Indicate that the team is not personal.
+     */
+    public function nonPersonalTeam(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'personal_team' => false,
+        ]);
+    }
 }

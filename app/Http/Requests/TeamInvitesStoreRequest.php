@@ -13,7 +13,14 @@ class TeamInvitesStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->can('inviteToTeam', $this->team);
+        $team = $this->user()->currentTeam;
+
+        // Return false if this is a personal team
+        if ($team->personal_team) {
+            return false;
+        }
+
+        return $this->user()->can('inviteToTeam', $team);
     }
 
     /**

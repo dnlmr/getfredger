@@ -20,6 +20,11 @@ it('creates an invite', function () {
 
     $user = User::factory()->create();
 
+    // Ensure team is not personal
+    $user->currentTeam->forceFill([
+        'personal_team' => false,
+    ])->save();
+
     Str::createRandomStringsUsing(fn () => 'abc');
 
     actingAs($user)
@@ -43,6 +48,11 @@ it('creates an invite', function () {
 it('requires a valid email address', function () {
     $user = User::factory()->create();
 
+    // Ensure team is not personal
+    $user->currentTeam->forceFill([
+        'personal_team' => false,
+    ])->save();
+
     actingAs($user)
         ->post(route('team.invites.store', $user->currentTeam), [
             'email' => 'abc',
@@ -52,6 +62,11 @@ it('requires a valid email address', function () {
 
 it('fails to create an invite if email is already used on team', function () {
     $user = User::factory()->create();
+
+    // Ensure team is not personal
+    $user->currentTeam->forceFill([
+        'personal_team' => false,
+    ])->save();
 
     TeamInvite::factory()->create([
         'team_id' => $user->currentTeam->id,
@@ -119,8 +134,9 @@ it('can revoke an invite', function () {
 it('can not revoke an invite without permission', function () {
     $user = User::factory()->create();
 
+    // Create another non-personal team
     $user->teams()->attach(
-        $anotherTeam = Team::factory()->create()
+        $anotherTeam = Team::factory()->nonPersonalTeam()->create()
     );
 
     $invite = TeamInvite::factory()
@@ -178,5 +194,20 @@ it('can accept an invite', function () {
         'team_id' => $invite->team_id,
         'token' => $invite->token,
         'email' => $invite->email,
+    ]);
+});
+
+it('cannot send invite for personal team', function () {
+    $user = User::factory()->create();
+
+    actingAs($user)
+        ->post(route('team.invites.store', $user->currentTeam), [
+            'email' => 'invite@example.com',
+        ])
+        ->assertForbidden();
+
+    assertDatabaseMissing('team_invites', [
+        'team_id' => $user->currentTeam->id,
+        'email' => 'invite@example.com',
     ]);
 });

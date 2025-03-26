@@ -61,6 +61,11 @@ type TeamMembersProps = {
     members: Member[];
     invites: TeamInvite[];
     status?: string;
+    team: {
+        id: number;
+        name: string;
+        personal_team: boolean;
+    };
 };
 
 const InviteForm = () => {
@@ -177,12 +182,16 @@ const PendingInvites = ({ invites, onRevokeInvite }: { invites: TeamInvite[], on
 };
 
 export default function TeamMembers() {
-    const { members, invites, status } = usePage<SharedData & TeamMembersProps>().props;
+    const { members, invites, status, team } = usePage<SharedData & TeamMembersProps>().props;
     const [memberToRemove, setMemberToRemove] = useState<Member | null>(null);
     const [inviteToRevoke, setInviteToRevoke] = useState<TeamInvite | null>(null);
     const [showRemoveDialog, setShowRemoveDialog] = useState(false);
     const [showRevokeDialog, setShowRevokeDialog] = useState(false);
     const { user, hasPermission, currentTeam } = useAuth();
+
+    // Use either the team from props or currentTeam from auth context
+    const activeTeam = team || currentTeam;
+    const isPersonalTeam = activeTeam?.personal_team || false;
 
     // Display a toast message if there's a status
     useState(() => {
@@ -264,62 +273,92 @@ export default function TeamMembers() {
                 <div className="space-y-12">
                     <div>
                         <HeadingSmall
-                            title="Team Members"
-                            description="Manage your team members and their roles"
+                            title={isPersonalTeam ? "Personal Team" : "Team Members"}
+                            description={isPersonalTeam
+                                ? "This is your personal team and cannot have additional members."
+                                : "Manage your team members and their roles"}
                         />
 
-                        {!members || members.length === 0 ? (
-                            <p className="text-neutral-500 mt-4">No members found in this team.</p>
-                        ) : (
-                            <div className="mt-4">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Member</TableHead>
-                                            <TableHead>Email</TableHead>
-                                            <TableHead>Role</TableHead>
-                                            <TableHead className="w-[100px]"></TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {members.map((member) => (
-                                            <TableRow key={member.id}>
-                                                <TableCell className="font-medium">
-                                                    <div className="flex items-center gap-3">
-                                                        <Avatar className="h-8 w-8">
-                                                            <AvatarImage src={member.profile_photo_url} />
-                                                            <AvatarFallback>{getInitials(member.name)}</AvatarFallback>
-                                                        </Avatar>
-                                                        <span>{member.name}</span>
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell>{member.email}</TableCell>
-                                                <TableCell>{getRoleBadge(member)}</TableCell>
-                                                <TableCell>
-                                                    {canRemoveMember(member.id) && (
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            onClick={() => handleRemoveMember(member)}
-                                                            className="text-red-500 hover:text-red-700 hover:bg-red-100"
-                                                        >
-                                                            <Trash className="size-4" />
-                                                        </Button>
-                                                    )}
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
+                        {isPersonalTeam && (
+                            <div className="mt-4 rounded-lg border border-sky-100 bg-sky-50 p-4 text-sm text-sky-700 dark:border-sky-200/10 dark:bg-sky-700/10 dark:text-sky-300">
+                                <p>This team was created when you registered and serves as your personal workspace. Your personal team cannot have additional members.</p>
                             </div>
                         )}
+
+                        <div className={isPersonalTeam ? "relative mt-8 pointer-events-none" : "mt-4"}>
+                            {!members || members.length === 0 ? (
+                                <p className="text-neutral-500 mt-4">No members found in this team.</p>
+                            ) : (
+                                <div className={isPersonalTeam ? "opacity-50" : ""}>
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>Member</TableHead>
+                                                <TableHead>Email</TableHead>
+                                                <TableHead>Role</TableHead>
+                                                <TableHead className="w-[100px]"></TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {members.map((member) => (
+                                                <TableRow key={member.id}>
+                                                    <TableCell className="font-medium">
+                                                        <div className="flex items-center gap-3">
+                                                            <Avatar className="h-8 w-8">
+                                                                <AvatarImage src={member.profile_photo_url} />
+                                                                <AvatarFallback>{getInitials(member.name)}</AvatarFallback>
+                                                            </Avatar>
+                                                            <span>{member.name}</span>
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell>{member.email}</TableCell>
+                                                    <TableCell>{getRoleBadge(member)}</TableCell>
+                                                    <TableCell>
+                                                        {canRemoveMember(member.id) && !isPersonalTeam && (
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                onClick={() => handleRemoveMember(member)}
+                                                                className="text-red-500 hover:text-red-700 hover:bg-red-100"
+                                                            >
+                                                                <Trash className="size-4" />
+                                                            </Button>
+                                                        )}
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </div>
+                            )}
+
+                            {isPersonalTeam && members && members.length > 0 && (
+                                <div className="absolute inset-0 bg-white/10 dark:bg-black/10 backdrop-blur-[1px]ZZZ rounded-lg"></div>
+                            )}
+                        </div>
                     </div>
 
                     {invites && invites.length > 0 && (
-                        <PendingInvites invites={invites} onRevokeInvite={handleRevokeInvite} />
+                        <div className={isPersonalTeam ? "relative pointer-events-none" : ""}>
+                            <div className={isPersonalTeam ? "opacity-50" : ""}>
+                                <PendingInvites invites={invites} onRevokeInvite={handleRevokeInvite} />
+                            </div>
+
+                            {isPersonalTeam && (
+                                <div className="absolute inset-0 bg-white/10 dark:bg-black/10 backdrop-blur-[1px]ZZZ -mb-1 rounded-lg"></div>
+                            )}
+                        </div>
                     )}
 
-                    <InviteForm />
+                    <div className={isPersonalTeam ? "relative pointer-events-none" : ""}>
+                        <div className={isPersonalTeam ? "opacity-50" : ""}>
+                            <InviteForm />
+                        </div>
+
+                        {isPersonalTeam && (
+                            <div className="absolute inset-0 bg-white/10 dark:bg-black/10 backdrop-blur-[1px]ZZZ -mb-1 rounded-lg"></div>
+                        )}
+                    </div>
                 </div>
             </SettingsLayout>
 
