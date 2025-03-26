@@ -1,5 +1,5 @@
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { Head, usePage, router } from '@inertiajs/react';
+import { Head, usePage, router, useForm } from '@inertiajs/react';
 import HeadingSmall from '@/components/heading-small';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/team-settings/team-layout';
@@ -64,9 +64,12 @@ type TeamMembersProps = {
 };
 
 const InviteForm = () => {
-    const [email, setEmail] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const { currentTeam, hasPermission } = useAuth();
+
+    // Replace useState with useForm for proper error handling
+    const { data, setData, post, processing, errors, reset } = useForm({
+        email: '',
+    });
 
     // Check if user has permission to invite team members
     const canInvite = hasPermission('invite team members');
@@ -75,17 +78,12 @@ const InviteForm = () => {
         e.preventDefault();
         if (!currentTeam) return;
 
-        setIsSubmitting(true);
-
-        router.post(route('team.invites.store', { team: currentTeam.id }), {
-            email
-        }, {
+        post(route('team.invites.store', { team: currentTeam.id }), {
             preserveScroll: true,
             onSuccess: () => {
-                setEmail('');
+                reset('email');
                 toast.success('Invitation sent successfully');
             },
-            onFinish: () => setIsSubmitting(false)
         });
     };
 
@@ -100,15 +98,21 @@ const InviteForm = () => {
                 <div className="grid gap-2">
                     <Label htmlFor="email">Email Address</Label>
                     <div className="flex gap-2">
-                        <Input
-                            id="email"
-                            type="email"
-                            placeholder="colleague@example.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                        <Button type="submit" disabled={isSubmitting}>
+                        <div className="flex-1">
+                            <Input
+                                id="email"
+                                type="email"
+                                placeholder="colleague@example.com"
+                                value={data.email}
+                                onChange={(e) => setData('email', e.target.value)}
+                                required
+                                className={errors.email ? "border-red-500" : ""}
+                            />
+                            {errors.email && (
+                                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                            )}
+                        </div>
+                        <Button type="submit" disabled={processing}>
                             <UserPlus className="size-4 mr-2" />
                             Invite Member
                         </Button>
