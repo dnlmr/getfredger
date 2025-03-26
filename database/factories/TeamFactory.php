@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,6 +19,18 @@ class TeamFactory extends Factory
     {
         return [
             'name' => fake()->sentence(2),
+            'user_id' => User::factory(),
+            'personal_team' => false, // All factory-created teams are not personal by default
         ];
+    }
+
+    /**
+     * Indicate that the team is personal.
+     */
+    public function withPersonalTeam(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'personal_team' => true,
+        ]);
     }
 }

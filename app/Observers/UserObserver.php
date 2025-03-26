@@ -9,12 +9,13 @@ class UserObserver
 {
     public function created(User $user)
     {
-        $user->teams()->attach([
-            $team = Team::create([
-                'name' => $user->name."'s team",
-            ]),
+        $team = Team::create([
+            'user_id' => $user->id,
+            'name' => $user->name."'s team",
+            'personal_team' => true,
         ]);
 
+        $user->teams()->attach($team);
         $user->currentTeam()->associate($team);
         $user->save();
 

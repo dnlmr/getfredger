@@ -31,10 +31,13 @@ class TeamController extends Controller
     {
         $user = auth()->user();
 
-        $user->teams()->attach([
-            $team = Team::create($request->only('name')),
+        $team = Team::create([
+            'user_id' => $user->id,
+            'name' => $request->name,
+            'personal_team' => false,
         ]);
 
+        $user->teams()->attach($team);
         $user->currentTeam()->associate($team)->save();
 
         setPermissionsTeamId($team->id);
@@ -52,6 +55,11 @@ class TeamController extends Controller
 
     public function leave(TeamLeaveRequest $request, Team $team): RedirectResponse
     {
+        // Prevent leaving a personal team
+        if ($team->personal_team) {
+            return abort(403);
+        }
+
         $user = $request->user();
 
         $user->teams()->detach($team);

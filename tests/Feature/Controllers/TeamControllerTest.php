@@ -11,26 +11,37 @@ it('switches the current team for the user', function () {
     $user = User::factory()->create();
 
     $user->teams()->attach(
-        $team = Team::factory()->create()
+        $team = Team::factory()->create([
+            'user_id' => $user->id,
+            'personal_team' => false,
+        ])
     );
 
     actingAs($user)
         ->patch(route('team.current', $team))
         ->assertRedirect();
 
-    expect($user->currentTeam->id)->toBe($team->id);
+    expect($user->currentTeam->id)->toBe($team->id)
+        ->and($user->teams)->toHaveCount(2);
 });
 
 it('can not switch to a team that the user does not belong to', function () {
     $user = User::factory()->create();
+    $anotherUser = User::factory()->create();
 
-    $anotherTeam = Team::factory()->create();
+    $anotherTeam = Team::factory()->create([
+        'user_id' => $anotherUser->id,
+    ]);
+
+    $anotherUser->teams()->attach($anotherTeam);
 
     actingAs($user)
         ->patch(route('team.current', $anotherTeam))
         ->assertForbidden();
 
-    expect($user->currentTeam->id)->not->toBe($anotherTeam->id);
+    expect($user->currentTeam->id)->not->toBe($anotherTeam->id)
+        ->and($user->teams)->toHaveCount(1)
+        ->and($anotherUser->teams)->toHaveCount(2);
 });
 
 it('can update team', function () {
@@ -58,9 +69,13 @@ it('can not update if not in team', function () {
 
 it('can not update a team without permission', function () {
     $user = User::factory()->create();
+    $anotherUser = User::factory()->create();
 
     $user->teams()->attach(
-        $anotherTeam = Team::factory()->create()
+        $anotherTeam = Team::factory()->create([
+            'user_id' => $anotherUser->id,
+            'personal_team' => false,
+        ])
     );
 
     setPermissionsTeamId($anotherTeam->id);
@@ -74,11 +89,16 @@ it('can not update a team without permission', function () {
 });
 
 it('can leave a team', function () {
-    $user = User::factory()
-        ->has(Team::factory())
-        ->create();
+    $user = User::factory()->create();
 
-    $teamToLeave = $user->currentTeam;
+    // Create a non-personal team that the user belongs to
+    $teamToLeave = Team::factory()->create([
+        'user_id' => $user->id,
+        'personal_team' => false,
+    ]);
+
+    // Ensure user has multiple teams (current personal team + new non-personal team)
+    $user->teams()->attach($teamToLeave);
 
     actingAs($user)
         ->post(route('team.leave', $teamToLeave))
@@ -122,9 +142,9 @@ it('should show a list of team members', function () {
         );
 });
 
-it('can create a team', function() {
-
+it('can create a team', function () {
     $user = User::factory()->create();
+    $originalTeam = $user->currentTeam;
 
     actingAs($user)
         ->post(route('team.store'), [
@@ -133,8 +153,27 @@ it('can create a team', function() {
         ->assertRedirect();
 
     $user->refresh();
+    $newTeam = $user->currentTeam;
 
     expect($user->teams)->toHaveCount(2)
-        ->last()->name->toBe($teamName)
-        ->and($user->currentTeam->name)->toBe($teamName);
+        ->and($newTeam->name)->toBe($teamName)
+        ->and($newTeam->user_id)->toBe($user->id)
+        ->and($newTeam->personal_team)->toBe(0)
+        ->and($newTeam->id)->not->toBe($originalTeam->id);
+});
+
+it('cannot leave personal team', function () {
+
+    $user = User::factory()->create();
+    $personalTeam = Team::factory()->withPersonalTeam()->create([
+        'user_id' => $user->id,
+    ]);
+
+    $user->teams()->attach($personalTeam);
+
+    actingAs($user)
+        ->post(route('team.leave', $personalTeam))
+        ->assertForbidden();
+
+    expect($user->fresh()->teams->contains($personalTeam))->toBeTrue();
 });
