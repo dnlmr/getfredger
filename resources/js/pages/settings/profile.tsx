@@ -23,7 +23,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 type ProfileForm = {
     name: string;
     email: string;
-}
+};
 
 interface LanguageForm {
     language: string;
@@ -37,7 +37,13 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
         email: auth.user.email,
     });
 
-    const { data: languageData, setData: setLanguageData, patch: patchLanguage, processing: processingLanguage, recentlySuccessful: recentlySuccessfulLanguage } = useForm<LanguageForm>({
+    const {
+        data: languageData,
+        setData: setLanguageData,
+        patch: patchLanguage,
+        processing: processingLanguage,
+        recentlySuccessful: recentlySuccessfulLanguage,
+    } = useForm<LanguageForm>({
         language: auth.user.language || 'en',
     });
 
@@ -144,10 +150,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                         <div className="grid gap-2">
                             <Label htmlFor="language">Language</Label>
 
-                            <Select
-                                value={languageData.language}
-                                onValueChange={(value) => setLanguageData('language', value)}
-                            >
+                            <Select value={languageData.language} onValueChange={(value) => setLanguageData('language', value)}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Select a language" />
                                 </SelectTrigger>

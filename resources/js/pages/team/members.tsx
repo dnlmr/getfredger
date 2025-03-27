@@ -1,31 +1,19 @@
-import { type BreadcrumbItem, type SharedData } from '@/types';
-import { Head, usePage, router, useForm } from '@inertiajs/react';
 import HeadingSmall from '@/components/heading-small';
-import AppLayout from '@/layouts/app-layout';
-import SettingsLayout from '@/layouts/team-settings/team-layout';
+import { ResponsiveModal } from '@/components/responsive-modal';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Trash, UserPlus, Mail } from "lucide-react";
-import {
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
-import { useState, FormEvent } from 'react';
-import { ResponsiveModal } from '@/components/responsive-modal';
+import { DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useAuth } from '@/hooks/use-auth';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import AppLayout from '@/layouts/app-layout';
+import SettingsLayout from '@/layouts/team-settings/team-layout';
+import { type BreadcrumbItem, type SharedData } from '@/types';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
+import { Mail, Trash, UserPlus } from 'lucide-react';
+import { FormEvent, useState } from 'react';
 import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -69,7 +57,7 @@ type TeamMembersProps = {
 };
 
 const InviteForm = () => {
-    const { currentTeam, hasPermission } = useAuth();
+    const { user, hasPermission } = useAuth();
 
     // Replace useState with useForm for proper error handling
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -81,9 +69,9 @@ const InviteForm = () => {
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        if (!currentTeam) return;
+        if (!user?.current_team) return;
 
-        post(route('team.invites.store', { team: currentTeam.id }), {
+        post(route('team.invites.store', { team: user.current_team.id }), {
             preserveScroll: true,
             onSuccess: () => {
                 reset('email');
@@ -96,10 +84,8 @@ const InviteForm = () => {
 
     return (
         <div>
-            <HeadingSmall
-                title="Invite New Member"
-            />
-            <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+            <HeadingSmall title="Invite New Member" />
+            <form onSubmit={handleSubmit} className="mt-4 space-y-4">
                 <div className="grid gap-2">
                     <Label htmlFor="email">Email Address</Label>
                     <div className="flex gap-2">
@@ -111,14 +97,12 @@ const InviteForm = () => {
                                 value={data.email}
                                 onChange={(e) => setData('email', e.target.value)}
                                 required
-                                className={errors.email ? "border-red-500" : ""}
+                                className={errors.email ? 'border-red-500' : ''}
                             />
-                            {errors.email && (
-                                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-                            )}
+                            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
                         </div>
                         <Button type="submit" disabled={processing}>
-                            <UserPlus className="size-4 mr-2" />
+                            <UserPlus className="mr-2 size-4" />
                             Invite Member
                         </Button>
                     </div>
@@ -128,7 +112,7 @@ const InviteForm = () => {
     );
 };
 
-const PendingInvites = ({ invites, onRevokeInvite }: { invites: TeamInvite[], onRevokeInvite: (invite: TeamInvite) => void }) => {
+const PendingInvites = ({ invites, onRevokeInvite }: { invites: TeamInvite[]; onRevokeInvite: (invite: TeamInvite) => void }) => {
     const { hasPermission } = useAuth();
     const canRevokeInvites = hasPermission('revoke team invites');
 
@@ -136,9 +120,7 @@ const PendingInvites = ({ invites, onRevokeInvite }: { invites: TeamInvite[], on
 
     return (
         <div>
-            <HeadingSmall
-                title="Pending Invitations"
-            />
+            <HeadingSmall title="Pending Invitations" />
             <Table className="mt-4">
                 <TableHeader>
                     <TableRow>
@@ -167,7 +149,7 @@ const PendingInvites = ({ invites, onRevokeInvite }: { invites: TeamInvite[], on
                                         variant="ghost"
                                         size="sm"
                                         onClick={() => onRevokeInvite(invite)}
-                                        className="text-red-500 hover:text-red-700 hover:bg-red-100"
+                                        className="text-red-500 hover:bg-red-100 hover:text-red-700"
                                     >
                                         <Trash className="size-4" />
                                     </Button>
@@ -187,10 +169,10 @@ export default function TeamMembers() {
     const [inviteToRevoke, setInviteToRevoke] = useState<TeamInvite | null>(null);
     const [showRemoveDialog, setShowRemoveDialog] = useState(false);
     const [showRevokeDialog, setShowRevokeDialog] = useState(false);
-    const { user, hasPermission, currentTeam } = useAuth();
+    const { user, hasPermission } = useAuth();
 
-    // Use either the team from props or currentTeam from auth context
-    const activeTeam = team || currentTeam;
+    // Use either the team from props or user.current_team from auth context
+    const activeTeam = team || user?.current_team;
     const isPersonalTeam = activeTeam?.personal_team || false;
 
     // Display a toast message if there's a status
@@ -210,17 +192,20 @@ export default function TeamMembers() {
     };
 
     const confirmRemoveMember = () => {
-        if (memberToRemove && currentTeam) {
-            router.delete(route('team.members.destroy', {
-                team: currentTeam.id,
-                user: memberToRemove.id
-            }), {
-                preserveScroll: true,
-                onSuccess: () => {
-                    setShowRemoveDialog(false);
-                    setMemberToRemove(null);
-                }
-            });
+        if (memberToRemove && user?.current_team) {
+            router.delete(
+                route('team.members.destroy', {
+                    team: user.current_team.id,
+                    user: memberToRemove.id,
+                }),
+                {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        setShowRemoveDialog(false);
+                        setMemberToRemove(null);
+                    },
+                },
+            );
         }
     };
 
@@ -230,23 +215,26 @@ export default function TeamMembers() {
     };
 
     const confirmRevokeInvite = () => {
-        if (inviteToRevoke && currentTeam) {
-            router.delete(route('team.invites.destroy', {
-                team: currentTeam.id,
-                teamInvite: inviteToRevoke.id
-            }), {
-                preserveScroll: true,
-                onSuccess: () => {
-                    setShowRevokeDialog(false);
-                    setInviteToRevoke(null);
-                    toast.success(`Invitation to ${inviteToRevoke.email} has been revoked`);
-                }
-            });
+        if (inviteToRevoke && user?.current_team) {
+            router.delete(
+                route('team.invites.destroy', {
+                    team: user.current_team.id,
+                    teamInvite: inviteToRevoke.id,
+                }),
+                {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        setShowRevokeDialog(false);
+                        setInviteToRevoke(null);
+                        toast.success(`Invitation to ${inviteToRevoke.email} has been revoked`);
+                    },
+                },
+            );
         }
     };
 
     const getRoleBadge = (member: Member) => {
-        if (member.roles?.some(role => role.name === 'team admin')) {
+        if (member.roles?.some((role) => role.name === 'team admin')) {
             return <Badge className="bg-lime-400/20 text-lime-700 dark:bg-lime-400/10 dark:text-lime-300">Admin</Badge>;
         }
         return <Badge className="bg-sky-400/20 text-sky-700 dark:bg-sky-400/10 dark:text-sky-300">Member</Badge>;
@@ -255,7 +243,7 @@ export default function TeamMembers() {
     const getInitials = (name: string) => {
         return name
             .split(' ')
-            .map(part => part[0])
+            .map((part) => part[0])
             .join('')
             .toUpperCase()
             .substring(0, 2);
@@ -273,23 +261,28 @@ export default function TeamMembers() {
                 <div className="space-y-12">
                     <div>
                         <HeadingSmall
-                            title={isPersonalTeam ? "Personal Team" : "Team Members"}
-                            description={isPersonalTeam
-                                ? "This is your personal team and cannot have additional members."
-                                : "Manage your team members and their roles"}
+                            title={isPersonalTeam ? 'Personal Team' : 'Team Members'}
+                            description={
+                                isPersonalTeam
+                                    ? 'This is your personal team and cannot have additional members.'
+                                    : 'Manage your team members and their roles'
+                            }
                         />
 
                         {isPersonalTeam && (
                             <div className="mt-4 rounded-lg border border-sky-100 bg-sky-50 p-4 text-sm text-sky-700 dark:border-sky-200/10 dark:bg-sky-700/10 dark:text-sky-300">
-                                <p>This team was created when you registered and serves as your personal workspace. Your personal team cannot have additional members.</p>
+                                <p>
+                                    This team was created when you registered and serves as your personal workspace. Your personal team cannot have
+                                    additional members.
+                                </p>
                             </div>
                         )}
 
-                        <div className={isPersonalTeam ? "relative mt-8 pointer-events-none" : "mt-4"}>
+                        <div className={isPersonalTeam ? 'pointer-events-none relative mt-8' : 'mt-4'}>
                             {!members || members.length === 0 ? (
-                                <p className="text-neutral-500 mt-4">No members found in this team.</p>
+                                <p className="mt-4 text-neutral-500">No members found in this team.</p>
                             ) : (
-                                <div className={isPersonalTeam ? "opacity-50" : ""}>
+                                <div className={isPersonalTeam ? 'opacity-50' : ''}>
                                     <Table>
                                         <TableHeader>
                                             <TableRow>
@@ -319,7 +312,7 @@ export default function TeamMembers() {
                                                                 variant="ghost"
                                                                 size="sm"
                                                                 onClick={() => handleRemoveMember(member)}
-                                                                className="text-red-500 hover:text-red-700 hover:bg-red-100"
+                                                                className="text-red-500 hover:bg-red-100 hover:text-red-700"
                                                             >
                                                                 <Trash className="size-4" />
                                                             </Button>
@@ -333,31 +326,29 @@ export default function TeamMembers() {
                             )}
 
                             {isPersonalTeam && members && members.length > 0 && (
-                                <div className="absolute inset-0 bg-white/10 dark:bg-black/10 backdrop-blur-[1px] rounded-lg"></div>
+                                <div className="absolute inset-0 rounded-lg bg-white/10 backdrop-blur-[1px] dark:bg-black/10"></div>
                             )}
                         </div>
                     </div>
 
                     {invites && invites.length > 0 && (
-                        <div className={isPersonalTeam ? "relative pointer-events-none" : ""}>
-                            <div className={isPersonalTeam ? "opacity-50" : ""}>
+                        <div className={isPersonalTeam ? 'pointer-events-none relative' : ''}>
+                            <div className={isPersonalTeam ? 'opacity-50' : ''}>
                                 <PendingInvites invites={invites} onRevokeInvite={handleRevokeInvite} />
                             </div>
 
                             {isPersonalTeam && (
-                                <div className="absolute inset-0 bg-white/10 dark:bg-black/10 backdrop-blur-[1px] -mb-1 rounded-lg"></div>
+                                <div className="absolute inset-0 -mb-1 rounded-lg bg-white/10 backdrop-blur-[1px] dark:bg-black/10"></div>
                             )}
                         </div>
                     )}
 
-                    <div className={isPersonalTeam ? "relative pointer-events-none" : ""}>
-                        <div className={isPersonalTeam ? "opacity-50" : ""}>
+                    <div className={isPersonalTeam ? 'pointer-events-none relative' : ''}>
+                        <div className={isPersonalTeam ? 'opacity-50' : ''}>
                             <InviteForm />
                         </div>
 
-                        {isPersonalTeam && (
-                            <div className="absolute inset-0 bg-white/10 dark:bg-black/10 backdrop-blur-[1px] -mb-1 rounded-lg"></div>
-                        )}
+                        {isPersonalTeam && <div className="absolute inset-0 -mb-1 rounded-lg bg-white/10 backdrop-blur-[1px] dark:bg-black/10"></div>}
                     </div>
                 </div>
             </SettingsLayout>
@@ -370,16 +361,10 @@ export default function TeamMembers() {
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter className="mt-6">
-                    <Button
-                        variant="outline"
-                        onClick={() => setShowRemoveDialog(false)}
-                    >
+                    <Button variant="outline" onClick={() => setShowRemoveDialog(false)}>
                         Cancel
                     </Button>
-                    <Button
-                        variant="destructive"
-                        onClick={confirmRemoveMember}
-                    >
+                    <Button variant="destructive" onClick={confirmRemoveMember}>
                         Remove
                     </Button>
                 </DialogFooter>
@@ -388,21 +373,13 @@ export default function TeamMembers() {
             <ResponsiveModal open={showRevokeDialog} onOpenChange={setShowRevokeDialog}>
                 <DialogHeader>
                     <DialogTitle>Revoke Invitation</DialogTitle>
-                    <DialogDescription>
-                        Are you sure you want to revoke the invitation sent to {inviteToRevoke?.email}?
-                    </DialogDescription>
+                    <DialogDescription>Are you sure you want to revoke the invitation sent to {inviteToRevoke?.email}?</DialogDescription>
                 </DialogHeader>
                 <DialogFooter className="mt-6">
-                    <Button
-                        variant="outline"
-                        onClick={() => setShowRevokeDialog(false)}
-                    >
+                    <Button variant="outline" onClick={() => setShowRevokeDialog(false)}>
                         Cancel
                     </Button>
-                    <Button
-                        variant="destructive"
-                        onClick={confirmRevokeInvite}
-                    >
+                    <Button variant="destructive" onClick={confirmRevokeInvite}>
                         Revoke
                     </Button>
                 </DialogFooter>

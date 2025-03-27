@@ -1,5 +1,5 @@
-import { usePage } from '@inertiajs/react';
 import { type SharedData } from '@/types';
+import { usePage } from '@inertiajs/react';
 
 export function useAuth() {
     const { auth } = usePage<SharedData>().props;
@@ -14,18 +14,17 @@ export function useAuth() {
     };
 
     const hasAnyRole = (roles: string[]) => {
-        return roles.some(role => hasRole(role));
+        return roles.some((role) => hasRole(role));
     };
 
     const hasAnyPermission = (permissions: string[]) => {
-        return permissions.some(permission => hasPermission(permission));
+        return permissions.some((permission) => hasPermission(permission));
     };
 
     const isAdmin = () => hasRole('team admin');
 
     return {
         user,
-        currentTeam: user?.currentTeam,
         hasRole,
         hasPermission,
         hasAnyRole,

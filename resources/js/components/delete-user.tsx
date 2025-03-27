@@ -55,41 +55,41 @@ export default function DeleteUser() {
                 </Button>
 
                 <ResponsiveModal open={isOpen} onOpenChange={handleOpenChange}>
-                        <DialogTitle>Are you sure you want to delete your account?</DialogTitle>
-                        <DialogDescription className="mt-2 mb-4">
-                            Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password
-                            to confirm you would like to permanently delete your account.
-                        </DialogDescription>
-                        <form className="space-y-6" onSubmit={deleteUser}>
-                            <div className="grid gap-2">
-                                <Label htmlFor="password" className="sr-only">
-                                    Password
-                                </Label>
+                    <DialogTitle>Are you sure you want to delete your account?</DialogTitle>
+                    <DialogDescription className="mt-2 mb-4">
+                        Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password to
+                        confirm you would like to permanently delete your account.
+                    </DialogDescription>
+                    <form className="space-y-6" onSubmit={deleteUser}>
+                        <div className="grid gap-2">
+                            <Label htmlFor="password" className="sr-only">
+                                Password
+                            </Label>
 
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    name="password"
-                                    ref={passwordInput}
-                                    value={data.password}
-                                    onChange={(e) => setData('password', e.target.value)}
-                                    placeholder="Password"
-                                    autoComplete="current-password"
-                                />
+                            <Input
+                                id="password"
+                                type="password"
+                                name="password"
+                                ref={passwordInput}
+                                value={data.password}
+                                onChange={(e) => setData('password', e.target.value)}
+                                placeholder="Password"
+                                autoComplete="current-password"
+                            />
 
-                                <InputError message={errors.password} />
-                            </div>
+                            <InputError message={errors.password} />
+                        </div>
 
-                            <DialogFooter className="gap-2">
-                                <Button variant="secondary" onClick={handleModalClose} type="button">
-                                    Cancel
-                                </Button>
+                        <DialogFooter className="gap-2">
+                            <Button variant="secondary" onClick={handleModalClose} type="button">
+                                Cancel
+                            </Button>
 
-                                <Button variant="destructive" disabled={processing} type="submit">
-                                    Delete account
-                                </Button>
-                            </DialogFooter>
-                        </form>
+                            <Button variant="destructive" disabled={processing} type="submit">
+                                Delete account
+                            </Button>
+                        </DialogFooter>
+                    </form>
                 </ResponsiveModal>
             </div>
         </div>

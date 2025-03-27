@@ -47,7 +47,7 @@ export interface User {
     updated_at: string;
     teams?: Team[];
     current_team_id?: number;
-    currentTeam?: Team;
+    current_team?: Team;
     roles?: string[];
     permissions?: string[];
     [key: string]: unknown; // This allows for additional properties...
