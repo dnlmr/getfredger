@@ -17,7 +17,7 @@ class TeamController extends Controller
     {
         $request->user()->currentTeam()->associate($team)->save();
 
-        return to_route('dashboard');
+        return to_route('team.edit');
     }
 
     public function edit(Request $request)

@@ -36,14 +36,7 @@ export function TeamSwitcher() {
     }
 
     const handleTeamChange = (team: Team) => {
-        router.patch(
-            route('team.current', { team: team.id }),
-            {},
-            {
-                preserveScroll: true,
-                preserveState: true,
-            },
-        );
+        router.patch(route('team.current', { team: team.id }), {}, {});
     };
 
     const handleAddTeam = () => {
