@@ -36,7 +36,15 @@ export function TeamSwitcher() {
     }
 
     const handleTeamChange = (team: Team) => {
-        router.patch(route('team.current', { team: team.id }), {}, {});
+        router.patch(
+            route('team.current', { team: team.id }),
+            {},
+            {
+                onSuccess: () => {
+                    window.location.reload();
+                },
+            }
+        );
     };
 
     const handleAddTeam = () => {
