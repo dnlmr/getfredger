@@ -33,6 +33,8 @@ export interface SharedData {
 export interface Team {
     id: number;
     name: string;
+    personal_team: boolean;
+    user_id: number;
     created_at: string;
     updated_at: string;
 }

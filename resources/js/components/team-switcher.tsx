@@ -17,7 +17,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { SharedData, Team } from '@/types';
 import { Link, router, usePage } from '@inertiajs/react';
-import { ChevronsUpDown, Plus, Settings, Users } from 'lucide-react';
+import { ChevronsUpDown, Plus, Settings, Users, User } from 'lucide-react';
 import { useState } from 'react';
 import AppLogoIcon from './app-logo-icon';
 
@@ -66,9 +66,13 @@ export function TeamSwitcher() {
         );
     };
 
-    const TeamLogo = () => (
+    const TeamLogo = ({ team }: { team: Team }) => (
         <div className="flex size-6 items-center justify-center rounded-sm">
-            <Users className="size-4 shrink-0" />
+            {team.personal_team ? (
+                <User className="size-4 shrink-0" />
+            ) : (
+                <Users className="size-4 shrink-0" />
+            )}
         </div>
     );
 
@@ -116,7 +120,7 @@ export function TeamSwitcher() {
                                 <DropdownMenuLabel className="text-muted-foreground text-xs">Teams</DropdownMenuLabel>
                                 {user.teams.map((team) => (
                                     <DropdownMenuItem key={team.id} onClick={() => handleTeamChange(team)} className="gap-2 p-2">
-                                        <TeamLogo />
+                                        <TeamLogo team={team} />
                                         {team.name}
                                         {user.current_team?.id === team.id && (
                                             <span className="ml-auto size-1.5 rounded-full bg-lime-300 dark:bg-lime-600/50"></span>
