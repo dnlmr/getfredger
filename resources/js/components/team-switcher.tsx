@@ -17,7 +17,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { SharedData, Team } from '@/types';
 import { Link, router, usePage } from '@inertiajs/react';
-import { ChevronsUpDown, Plus, Settings, Users, User } from 'lucide-react';
+import { ChevronsUpDown, Plus, Settings, User, Users } from 'lucide-react';
 import { useState } from 'react';
 import AppLogoIcon from './app-logo-icon';
 
@@ -43,7 +43,7 @@ export function TeamSwitcher() {
                 onSuccess: () => {
                     window.location.reload();
                 },
-            }
+            },
         );
     };
 
@@ -68,11 +68,7 @@ export function TeamSwitcher() {
 
     const TeamLogo = ({ team }: { team: Team }) => (
         <div className="flex size-6 items-center justify-center rounded-sm">
-            {team.personal_team ? (
-                <User className="size-4 shrink-0" />
-            ) : (
-                <Users className="size-4 shrink-0" />
-            )}
+            {team.personal_team ? <User className="size-4 shrink-0" /> : <Users className="size-4 shrink-0" />}
         </div>
     );
 
@@ -150,41 +146,49 @@ export function TeamSwitcher() {
             </SidebarMenu>
 
             <ResponsiveModal open={showAddTeamModal} onOpenChange={setShowAddTeamModal}>
-                <DialogHeader>
-                    <DialogTitle>Create New Team</DialogTitle>
-                    <DialogDescription>Add a new team to collaborate with others.</DialogDescription>
-                </DialogHeader>
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        handleAddTeam();
+                    }}
+                >
+                    <DialogHeader>
+                        <DialogTitle>Create New Team</DialogTitle>
+                        <DialogDescription>Add a new team to collaborate with others.</DialogDescription>
+                    </DialogHeader>
 
-                <div className="mt-6 space-y-4">
-                    <div className="space-y-2">
-                        <label htmlFor="team-name" className="text-sm font-medium">
-                            Team Name
-                        </label>
-                        <Input
-                            id="team-name"
-                            value={teamName}
-                            onChange={(e) => setTeamName(e.target.value)}
-                            placeholder="Enter team name"
-                            className="w-full"
-                        />
+                    <div className="mt-6 space-y-4">
+                        <div className="space-y-2">
+                            <label htmlFor="team-name" className="text-sm font-medium">
+                                Team Name
+                            </label>
+                            <Input
+                                id="team-name"
+                                value={teamName}
+                                onChange={(e) => setTeamName(e.target.value)}
+                                placeholder="Enter team name"
+                                className="w-full"
+                            />
+                        </div>
                     </div>
-                </div>
 
-                <DialogFooter className="mt-6">
-                    <Button
-                        variant="outline"
-                        onClick={() => {
-                            setShowAddTeamModal(false);
-                            setTeamName('');
-                        }}
-                        disabled={processing}
-                    >
-                        Cancel
-                    </Button>
-                    <Button onClick={handleAddTeam} disabled={!teamName.trim() || processing}>
-                        {processing ? 'Creating...' : 'Create Team'}
-                    </Button>
-                </DialogFooter>
+                    <DialogFooter className="mt-6">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => {
+                                setShowAddTeamModal(false);
+                                setTeamName('');
+                            }}
+                            disabled={processing}
+                        >
+                            Cancel
+                        </Button>
+                        <Button type="submit" disabled={!teamName.trim() || processing}>
+                            {processing ? 'Creating...' : 'Create Team'}
+                        </Button>
+                    </DialogFooter>
+                </form>
             </ResponsiveModal>
         </>
     );
