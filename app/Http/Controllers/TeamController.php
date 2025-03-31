@@ -43,7 +43,7 @@ class TeamController extends Controller
         setPermissionsTeamId($team->id);
         $user->assignRole('team admin');
 
-        return redirect()->route('team.edit', $team)->withStatus('team-created');
+        return redirect()->route('team.edit')->withStatus('team-created');
     }
 
     public function update(TeamUpdateRequest $request, Team $team): RedirectResponse

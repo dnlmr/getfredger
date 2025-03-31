@@ -20,6 +20,7 @@ import { Link, router, useForm, usePage } from '@inertiajs/react';
 import { ChevronsUpDown, Plus, Settings, User, Users } from 'lucide-react';
 import { useState } from 'react';
 import AppLogoIcon from './app-logo-icon';
+import { toast } from 'sonner';
 
 export function TeamSwitcher() {
     const { state } = useSidebar();
@@ -53,6 +54,7 @@ export function TeamSwitcher() {
         form.post(route('team.store'), {
             onSuccess: () => {
                 setShowAddTeamModal(false);
+                toast.success(`Team "${form.data.name}" created successfully`);
                 form.reset();
             },
             preserveScroll: true,
