@@ -16,7 +16,7 @@ import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/c
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { SharedData, Team } from '@/types';
-import { Link, router, usePage } from '@inertiajs/react';
+import { Link, router, useForm, usePage } from '@inertiajs/react';
 import { ChevronsUpDown, Plus, Settings, User, Users } from 'lucide-react';
 import { useState } from 'react';
 import AppLogoIcon from './app-logo-icon';
@@ -28,8 +28,10 @@ export function TeamSwitcher() {
     const user = auth.user;
     const cleanup = useMobileNavigation();
     const [showAddTeamModal, setShowAddTeamModal] = useState(false);
-    const [teamName, setTeamName] = useState('');
-    const [processing, setProcessing] = useState(false);
+
+    const form = useForm({
+        name: '',
+    });
 
     if (!user || !user.teams || user.teams.length === 0) {
         return null;
@@ -48,22 +50,14 @@ export function TeamSwitcher() {
     };
 
     const handleAddTeam = () => {
-        setProcessing(true);
-        router.post(
-            route('team.store'),
-            { name: teamName },
-            {
-                onSuccess: () => {
-                    setShowAddTeamModal(false);
-                    setTeamName('');
-                    setProcessing(false);
-                },
-                onError: () => {
-                    setProcessing(false);
-                },
-                preserveScroll: true,
+        form.post(route('team.store'), {
+            onSuccess: () => {
+                setShowAddTeamModal(false);
+                form.reset();
             },
-        );
+            preserveScroll: true,
+            replace: false,
+        });
     };
 
     const TeamLogo = ({ team }: { team: Team }) => (
@@ -164,11 +158,14 @@ export function TeamSwitcher() {
                             </label>
                             <Input
                                 id="team-name"
-                                value={teamName}
-                                onChange={(e) => setTeamName(e.target.value)}
+                                value={form.data.name}
+                                onChange={(e) => form.setData('name', e.target.value)}
                                 placeholder="Enter team name"
                                 className="w-full"
                             />
+                            {form.errors.name && (
+                                <p className="text-destructive mt-1 text-sm">{form.errors.name}</p>
+                            )}
                         </div>
                     </div>
 
@@ -178,14 +175,14 @@ export function TeamSwitcher() {
                             variant="outline"
                             onClick={() => {
                                 setShowAddTeamModal(false);
-                                setTeamName('');
+                                form.reset();
                             }}
-                            disabled={processing}
+                            disabled={form.processing}
                         >
                             Cancel
                         </Button>
-                        <Button type="submit" disabled={!teamName.trim() || processing}>
-                            {processing ? 'Creating...' : 'Create Team'}
+                        <Button type="submit" disabled={!form.data.name.trim() || form.processing}>
+                            {form.processing ? 'Creating...' : 'Create Team'}
                         </Button>
                     </DialogFooter>
                 </form>

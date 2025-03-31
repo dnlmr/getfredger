@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class TeamStoreRequest extends FormRequest
 {
@@ -22,7 +23,14 @@ class TeamStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('teams', 'name')->where(function ($query) {
+                    return $query->where('user_id', auth()->id());
+                }),
+            ],
         ];
     }
 }
