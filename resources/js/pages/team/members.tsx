@@ -4,6 +4,16 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -12,7 +22,7 @@ import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/team-settings/team-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
-import { Mail, Trash, UserPlus } from 'lucide-react';
+import { ChevronDown, Mail, Trash, UserPlus } from 'lucide-react';
 import { FormEvent, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -163,13 +173,134 @@ const PendingInvites = ({ invites, onRevokeInvite }: { invites: TeamInvite[]; on
     );
 };
 
+// Helper function to get the appropriate role badge based on member's roles
+const getRoleBadge = (member: Member, currentUserId?: number | null, teamOwnerId?: number | null) => {
+    // Check if member is the team owner
+    const isTeamOwner = teamOwnerId && member.id === teamOwnerId;
+
+    if (isTeamOwner) {
+        return <Badge className="bg-purple-400/20 text-purple-700 dark:bg-purple-400/10 dark:text-purple-300">Team Owner</Badge>;
+    } else if (member.roles?.some((role) => role.name === 'team admin')) {
+        return <Badge className="bg-lime-400/20 text-lime-700 dark:bg-lime-400/10 dark:text-lime-300">Admin</Badge>;
+    } else if (member.roles?.some((role) => role.name === 'uploader')) {
+        return <Badge className="bg-sky-400/20 text-sky-700 dark:bg-sky-400/10 dark:text-sky-300">Uploader</Badge>;
+    }
+    return <Badge className="bg-indigo-400/20 text-indigo-700 dark:bg-indigo-400/10 dark:text-indigo-300">Member</Badge>;
+};
+
+// Define available roles
+const AVAILABLE_ROLES = [
+    { key: 'team admin', label: 'Admin' },
+    { key: 'team member', label: 'Member' },
+    { key: 'uploader', label: 'Uploader' },
+];
+
+// Role dropdown component for changing member roles
+const RoleDropdown = ({ member, teamId, onRemoveMember }: { member: Member; teamId: number; onRemoveMember: (member: Member) => void }) => {
+    const { hasPermission, user } = useAuth();
+    const canChangeRole = hasPermission('change member role');
+    const canRemove = hasPermission('remove team members') && member.id !== user?.id;
+    const isCurrentUser = member.id === user?.id;
+    const isTeamOwner = user?.current_team?.user_id === user?.id;
+    const isAdmin = member.roles?.some((role) => role.name === 'team admin');
+
+    // Check if this member is the team owner (can't change their role)
+    const isMemberTeamOwner = member.id === user?.current_team?.user_id;
+
+    // Get current role name
+    const getCurrentRole = () => {
+        const role = member.roles?.find((r) => AVAILABLE_ROLES.some((ar) => ar.key === r.name));
+        return role?.name || 'team member';
+    };
+
+    const currentRole = getCurrentRole();
+
+    // Get display label for role
+    const getRoleLabel = (roleName: string) => {
+        return AVAILABLE_ROLES.find((r) => r.key === roleName)?.label || 'Member';
+    };
+
+    const handleRoleChange = (role: string) => {
+        if (role === currentRole) return;
+
+        // Additional check before demoting from admin
+        if (isAdmin && role !== 'team admin' && !isTeamOwner) {
+            toast.error('Only the team owner can demote administrators');
+            return;
+        }
+
+        router.patch(
+            route('team.members.update', { team: teamId, user: member.id }),
+            {
+                role: role,
+            },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    toast.success(`Role for ${member.name} updated to ${getRoleLabel(role)}`);
+                },
+                onError: (errors) => {
+                    toast.error(errors.role || 'Failed to update role');
+                },
+            },
+        );
+    };
+
+    // If this is the team owner, or if no permissions at all, just show a static badge
+    // If this is the team owner, or if no permissions at all, just show a static badge
+    if (isMemberTeamOwner || (!canChangeRole && !canRemove)) {
+        return getRoleBadge(member, user?.id, user?.current_team?.user_id);
+    }
+    // If user can't change admin roles but can remove users, still show dropdown for removal option
+    const showRoleOptions = canChangeRole && (isTeamOwner || !isAdmin || isCurrentUser) && !isMemberTeamOwner;
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-7 gap-1 px-2 font-normal">
+                    {getRoleBadge(member)}
+                    <ChevronDown className="size-3 opacity-70" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+                {showRoleOptions && (
+                    <>
+                        <DropdownMenuLabel>Member Role</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuRadioGroup value={currentRole} onValueChange={handleRoleChange}>
+                            {AVAILABLE_ROLES.map((role) => (
+                                <DropdownMenuRadioItem key={role.key} value={role.key}>
+                                    {role.label}
+                                </DropdownMenuRadioItem>
+                            ))}
+                        </DropdownMenuRadioGroup>
+                    </>
+                )}
+
+                {canRemove && !isMemberTeamOwner && (
+                    <>
+                        {showRoleOptions && <DropdownMenuSeparator />}
+                        <DropdownMenuItem
+                            onClick={() => onRemoveMember(member)}
+                            className="text-red-600 focus:bg-red-50 focus:text-red-700 dark:text-red-400 dark:focus:bg-red-950/20 dark:focus:text-red-300"
+                        >
+                            <Trash className="mr-2 h-4 w-4 text-red-500" />
+                            Remove from team
+                        </DropdownMenuItem>
+                    </>
+                )}
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
+};
+
 export default function TeamMembers() {
     const { members, invites, status, team } = usePage<SharedData & TeamMembersProps>().props;
     const [memberToRemove, setMemberToRemove] = useState<Member | null>(null);
     const [inviteToRevoke, setInviteToRevoke] = useState<TeamInvite | null>(null);
     const [showRemoveDialog, setShowRemoveDialog] = useState(false);
     const [showRevokeDialog, setShowRevokeDialog] = useState(false);
-    const { user, hasPermission } = useAuth();
+    const { user } = useAuth();
 
     // Use either the team from props or user.current_team from auth context
     const activeTeam = team || user?.current_team;
@@ -183,6 +314,8 @@ export default function TeamMembers() {
             toast.success('Invitation revoked successfully');
         } else if (status === 'member-removed') {
             toast.success('Team member removed successfully');
+        } else if (status === 'role-updated') {
+            toast.success('Team member role updated successfully');
         }
     });
 
@@ -233,13 +366,6 @@ export default function TeamMembers() {
         }
     };
 
-    const getRoleBadge = (member: Member) => {
-        if (member.roles?.some((role) => role.name === 'team admin')) {
-            return <Badge className="bg-lime-400/20 text-lime-700 dark:bg-lime-400/10 dark:text-lime-300">Admin</Badge>;
-        }
-        return <Badge className="bg-sky-400/20 text-sky-700 dark:bg-sky-400/10 dark:text-sky-300">Member</Badge>;
-    };
-
     const getInitials = (name: string) => {
         return name
             .split(' ')
@@ -247,10 +373,6 @@ export default function TeamMembers() {
             .join('')
             .toUpperCase()
             .substring(0, 2);
-    };
-
-    const canRemoveMember = (memberId: number) => {
-        return memberId !== user?.id && hasPermission('remove team members');
     };
 
     return (
@@ -305,19 +427,16 @@ export default function TeamMembers() {
                                                         </div>
                                                     </TableCell>
                                                     <TableCell>{member.email}</TableCell>
-                                                    <TableCell>{getRoleBadge(member)}</TableCell>
                                                     <TableCell>
-                                                        {canRemoveMember(member.id) && !isPersonalTeam && (
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                onClick={() => handleRemoveMember(member)}
-                                                                className="text-red-500 hover:bg-red-100 hover:text-red-700"
-                                                            >
-                                                                <Trash className="size-4" />
-                                                            </Button>
+                                                        {activeTeam && (
+                                                            <RoleDropdown
+                                                                member={member}
+                                                                teamId={activeTeam.id}
+                                                                onRemoveMember={handleRemoveMember}
+                                                            />
                                                         )}
                                                     </TableCell>
+                                                    <TableCell>{/* Remove the delete button from here as it's now in the dropdown */}</TableCell>
                                                 </TableRow>
                                             ))}
                                         </TableBody>

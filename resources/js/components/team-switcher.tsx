@@ -85,9 +85,7 @@ export function TeamSwitcher() {
                                 </div>
                                 <div className="grid flex-1 text-left text-sm leading-tight">
                                     <span className="truncate font-semibold">{user.current_team?.name || 'Select Team'}</span>
-                                    <span className="truncate text-xs">
-                                        {user.current_team?.personal_team ? 'Personal team' : 'Team'}
-                                    </span>
+                                    <span className="truncate text-xs">{user.current_team?.personal_team ? 'Personal team' : 'Team'}</span>
                                 </div>
                                 <ChevronsUpDown className="ml-auto size-4" />
                             </SidebarMenuButton>
@@ -113,7 +111,9 @@ export function TeamSwitcher() {
                             <DropdownMenuSeparator />
 
                             <DropdownMenuGroup>
-                                <DropdownMenuLabel className="text-muted-foreground text-xs">Teams {user.teams?.length > 3 ? `(${user.teams.length})` : ''}</DropdownMenuLabel>
+                                <DropdownMenuLabel className="text-muted-foreground text-xs">
+                                    Teams {user.teams?.length > 3 ? `(${user.teams.length})` : ''}
+                                </DropdownMenuLabel>
                                 {user.teams.length > 5 ? (
                                     <ScrollArea className="h-[180px]">
                                         {user.teams.map((team) => (
