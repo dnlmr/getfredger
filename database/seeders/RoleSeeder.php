@@ -22,9 +22,21 @@ class RoleSeeder extends Seeder
                 'invite team members',
                 'revoke team invites',
                 'change member role',
+                'view own files',
+                'upload files',
+                'delete files',
+                'view all files',
             ],
             'team member' => [
                 'view team members',
+                'view own files',
+                'upload files',
+                'delete files',
+                'view all files',
+            ],
+            'uploader' => [
+                'upload files',
+                'view own files',
             ],
             // Add future roles here with their permissions
         ];
