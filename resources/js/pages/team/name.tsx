@@ -27,14 +27,14 @@ export default function TeamName() {
     const { team } = usePage<SharedData & { team: { id: number; name: string; personal_team: boolean } }>().props;
     const [confirmLeaveOpen, setConfirmLeaveOpen] = useState(false);
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } = useForm<Required<TeamForm>>({
+    const form = useForm<TeamForm>({
         name: team.name,
     });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        patch(route('team.update', team.id), {
+        form.patch(route('team.update', team.id), {
             preserveScroll: true,
         });
     };
@@ -64,20 +64,20 @@ export default function TeamName() {
                             <Input
                                 id="name"
                                 className="mt-1 block w-full"
-                                value={data.name}
-                                onChange={(e) => setData('name', e.target.value)}
+                                value={form.data.name}
+                                onChange={(e) => form.setData('name', e.target.value)}
                                 required
                                 placeholder="Team name"
                             />
 
-                            <InputError className="mt-2" message={errors.name} />
+                            <InputError className="mt-2" message={form.errors.name} />
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <Button disabled={processing}>Save</Button>
+                            <Button disabled={form.processing}>Save</Button>
 
                             <Transition
-                                show={recentlySuccessful}
+                                show={form.recentlySuccessful}
                                 enter="transition ease-in-out"
                                 enterFrom="opacity-0"
                                 leave="transition ease-in-out"
