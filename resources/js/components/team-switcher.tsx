@@ -12,6 +12,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
@@ -112,16 +113,30 @@ export function TeamSwitcher() {
                             <DropdownMenuSeparator />
 
                             <DropdownMenuGroup>
-                                <DropdownMenuLabel className="text-muted-foreground text-xs">Teams</DropdownMenuLabel>
-                                {user.teams.map((team) => (
-                                    <DropdownMenuItem key={team.id} onClick={() => handleTeamChange(team)} className="gap-2 p-2">
-                                        <TeamLogo team={team} />
-                                        {team.name}
-                                        {user.current_team?.id === team.id && (
-                                            <span className="ml-auto size-1.5 rounded-full bg-lime-300 dark:bg-lime-600/50"></span>
-                                        )}
-                                    </DropdownMenuItem>
-                                ))}
+                                <DropdownMenuLabel className="text-muted-foreground text-xs">Teams {user.teams?.length > 3 ? `(${user.teams.length})` : ''}</DropdownMenuLabel>
+                                {user.teams.length > 5 ? (
+                                    <ScrollArea className="h-[180px]">
+                                        {user.teams.map((team) => (
+                                            <DropdownMenuItem key={team.id} onClick={() => handleTeamChange(team)} className="gap-2 p-2">
+                                                <TeamLogo team={team} />
+                                                {team.name}
+                                                {user.current_team?.id === team.id && (
+                                                    <span className="ml-auto size-1.5 rounded-full bg-lime-300 dark:bg-lime-600/50"></span>
+                                                )}
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </ScrollArea>
+                                ) : (
+                                    user.teams.map((team) => (
+                                        <DropdownMenuItem key={team.id} onClick={() => handleTeamChange(team)} className="gap-2 p-2">
+                                            <TeamLogo team={team} />
+                                            {team.name}
+                                            {user.current_team?.id === team.id && (
+                                                <span className="ml-auto size-1.5 rounded-full bg-lime-300 dark:bg-lime-600/50"></span>
+                                            )}
+                                        </DropdownMenuItem>
+                                    ))
+                                )}
                             </DropdownMenuGroup>
 
                             <DropdownMenuSeparator />
