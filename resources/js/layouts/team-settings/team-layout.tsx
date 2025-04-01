@@ -9,12 +9,12 @@ import { type PropsWithChildren } from 'react';
 const sidebarNavItems: NavItem[] = [
     {
         title: 'Name',
-        url: '/team/name',
+        href: '/team/name',
         icon: null,
     },
     {
         title: 'Members',
-        url: '/team/members',
+        href: '/team/members',
         icon: null,
     },
 ];
@@ -36,17 +36,15 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
                     <nav className="flex flex-col space-y-1 space-x-0">
                         {sidebarNavItems.map((item) => (
                             <Button
-                                key={item.url}
+                                key={item.href}
                                 size="sm"
                                 variant="ghost"
                                 asChild
                                 className={cn('w-full justify-start', {
-                                    'bg-muted': currentPath === item.url,
+                                    'bg-muted': currentPath === item.href,
                                 })}
                             >
-                                <Link href={item.url} prefetch>
-                                    {item.title}
-                                </Link>
+                                <Link href={item.href}>{item.title}</Link>
                             </Button>
                         ))}
                     </nav>

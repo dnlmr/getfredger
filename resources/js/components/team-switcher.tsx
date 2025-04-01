@@ -19,8 +19,8 @@ import { SharedData, Team } from '@/types';
 import { Link, router, useForm, usePage } from '@inertiajs/react';
 import { ChevronsUpDown, Plus, Settings, User, Users } from 'lucide-react';
 import { useState } from 'react';
-import AppLogoIcon from './app-logo-icon';
 import { toast } from 'sonner';
+import AppLogoIcon from './app-logo-icon';
 
 export function TeamSwitcher() {
     const { state } = useSidebar();
@@ -39,15 +39,7 @@ export function TeamSwitcher() {
     }
 
     const handleTeamChange = (team: Team) => {
-        router.patch(
-            route('team.current', { team: team.id }),
-            {},
-            {
-                onSuccess: () => {
-                    window.location.reload();
-                },
-            },
-        );
+        router.patch(route('team.current', { team: team.id }), {}, {});
     };
 
     const handleAddTeam = () => {
@@ -165,9 +157,7 @@ export function TeamSwitcher() {
                                 placeholder="Enter team name"
                                 className="w-full"
                             />
-                            {form.errors.name && (
-                                <p className="text-destructive mt-1 text-sm">{form.errors.name}</p>
-                            )}
+                            {form.errors.name && <p className="text-destructive mt-1 text-sm">{form.errors.name}</p>}
                         </div>
                     </div>
 
