@@ -8,7 +8,7 @@ use SoloTerm\Solo\Themes;
 
 // Solo may not (should not!) exist in prod, so we have to
 // check here first to see if it's installed.
-if (!class_exists('\SoloTerm\Solo\Manager')) {
+if (! class_exists('\SoloTerm\Solo\Manager')) {
     return [
         //
     ];
@@ -49,7 +49,7 @@ return [
         // 'About' => 'php artisan solo:about',
         'Logs' => EnhancedTailCommand::file(storage_path('logs/laravel.log')),
         'Vite' => 'npm run dev',
-        'Horizon' => Command::from('php artisan horizon'),
+        'Horizon' => Command::from('php artisan horizon:terminate && php artisan horizon'),
         'Clear Events' => Command::from('php artisan event:clear && php artisan event:cache && php artisan optimize:clear'),
         'Events' => Command::from('php artisan event:list'),
 
@@ -84,5 +84,5 @@ return [
      * the dumps. This is the address. You probably don't need to change
      * this unless the default is already taken for some reason.
      */
-    'dump_server_host' => env('SOLO_DUMP_SERVER_HOST', 'tcp://127.0.0.1:9984')
+    'dump_server_host' => env('SOLO_DUMP_SERVER_HOST', 'tcp://127.0.0.1:9984'),
 ];
