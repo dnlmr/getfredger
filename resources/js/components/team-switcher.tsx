@@ -46,6 +46,7 @@ export function TeamSwitcher() {
             {
                 onSuccess: () => {
                     router.flushAll();
+                    window.location.reload();
                     toast.success(`Switched to team "${team.name}"`);
                 },
             },
@@ -56,6 +57,7 @@ export function TeamSwitcher() {
         form.post(route('team.store'), {
             onSuccess: () => {
                 setShowAddTeamModal(false);
+                window.location.reload();
                 toast.success(`Team "${form.data.name}" created successfully`);
                 form.reset();
             },
