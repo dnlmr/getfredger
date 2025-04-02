@@ -93,10 +93,18 @@ export default function TeamName() {
                     <div className="mt-10 space-y-6">
                         <HeadingSmall title="Personal Team" description="This is your personal team and cannot be left or deleted." />
                         <div className="rounded-lg border border-sky-100 bg-sky-50 p-4 text-sm text-sky-700 dark:border-sky-200/10 dark:bg-sky-700/10 dark:text-sky-100">
-                            <p>
-                                This team was created when you registered and serves as your personal workspace. Your personal team cannot be left or
-                                deleted.
-                            </p>
+                            <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+                                <p>
+                                    This team was created when you registered and serves as your personal workspace. Your personal team cannot be left
+                                    or deleted.
+                                </p>
+                                <Button
+                                    className="bg-linear-to-r/oklch from-indigo-500 to-teal-500 whitespace-nowrap text-white hover:from-indigo-600 hover:to-teal-600"
+                                    size="sm"
+                                >
+                                    Upgrade to Pro
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 ) : (

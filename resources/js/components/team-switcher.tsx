@@ -151,7 +151,7 @@ export function TeamSwitcher() {
                                     </div>
                                     <div className="font-medium">
                                         Add team{' '}
-                                        <span className="text-xxs ml-1 rounded-sm bg-gray-900/50 px-1 py-0.5 font-mono font-bold text-white dark:bg-gray-700/80 dark:text-gray-300">
+                                        <span className="text-xxs ml-1 rounded-sm bg-linear-to-r/oklch from-indigo-500 to-teal-500 px-1.5 py-0.5 font-mono font-bold text-white">
                                             PRO
                                         </span>
                                     </div>
