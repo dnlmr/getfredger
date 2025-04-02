@@ -262,7 +262,7 @@ const RoleDropdown = ({ member, teamId, onRemoveMember }: { member: Member; team
                     <ChevronDown className="size-3 opacity-70" />
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48">
+            <DropdownMenuContent align="start">
                 {showRoleOptions && (
                     <>
                         <DropdownMenuLabel>Member Role</DropdownMenuLabel>
@@ -284,7 +284,7 @@ const RoleDropdown = ({ member, teamId, onRemoveMember }: { member: Member; team
                             onClick={() => onRemoveMember(member)}
                             className="text-red-600 focus:bg-red-50 focus:text-red-700 dark:text-red-400 dark:focus:bg-red-950/20 dark:focus:text-red-300"
                         >
-                            <Trash className="mr-2 h-4 w-4 text-red-500" />
+                            <Trash className="h-4 w-4 text-red-500" />
                             Remove from team
                         </DropdownMenuItem>
                     </>
