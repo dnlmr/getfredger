@@ -14,6 +14,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/invoices/upload', UploadController::class)
         ->name('invoices.upload');
+
+    // Subscription routes
+    Route::get('/subscription', function () {
+        return Inertia::render('subscription', [
+            'plans' => config('subscriptions.plans'),
+        ]);
+    })->name('subscription.index');
 });
 
 require __DIR__.'/settings.php';

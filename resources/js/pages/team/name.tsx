@@ -101,6 +101,7 @@ export default function TeamName() {
                                 <Button
                                     className="bg-linear-to-r/oklch from-indigo-500 to-teal-500 whitespace-nowrap text-white hover:from-indigo-600 hover:to-teal-600"
                                     size="sm"
+                                    onClick={() => router.visit(route('subscription.index'))}
                                 >
                                     Upgrade to Pro
                                 </Button>

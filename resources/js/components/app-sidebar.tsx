@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { TeamSwitcher } from '@/components/team-switcher';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
-import { Bell, BookOpen, Folder, LayoutGrid, UploadCloud } from 'lucide-react';
+import { Bell, BookOpen, CreditCard, Folder, LayoutGrid, UploadCloud } from 'lucide-react';
 
 const mainNavItems: NavItem[] = [
     {
@@ -21,6 +21,11 @@ const mainNavItems: NavItem[] = [
         title: 'Upload',
         href: '/settings/appearance',
         icon: UploadCloud,
+    },
+    {
+        title: 'Subscription',
+        href: '/subscription',
+        icon: CreditCard,
     },
 ];
 

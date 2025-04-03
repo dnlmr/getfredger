@@ -25,6 +25,26 @@ Upload your invoice as an image or PDF and let Fredger do the rest. Fredger will
 | API Access | ❌ | ❌ | ❌ | ✅ Yes |
 | Pay-as-You-Go Option | ✅ (€0.25/invoice) | ✅ (€0.25/invoice) | ✅ (€0.20/invoice) | ✅ Custom Pricing |
 
+
+Alternatively, you can use the following table:
+# 📊 Fredger Pricing Plans
+
+| Plan       | Free 🎉                | Believer 🚀 (Early Supporter) | Pro 💼  |
+|------------|------------------------|------------------------------|---------|
+| **Price**  | €0/month                | **€49/year** _(limited offer)_ or €9/month | €89/year or €15/month |
+| **Invoice Uploads** | **5 per month**  | **Unlimited**  | **Unlimited** |
+| **AI Invoice Analysis** | ✅ Basic Extraction | ✅ Full AI Analysis | ✅ Full AI Analysis |
+| **Export to Excel** | ❌ Not Available | ✅ Yes | ✅ Yes |
+| **Processing Speed** | 🚀 Standard | ⚡ Priority | ⚡ Priority |
+| **Multi-User Support** | ❌ No | ❌ No | ✅ Yes |
+| **API Access** | ❌ No | ❌ No | ✅ Yes |
+| **Priority Support** | ❌ No | ✅ Yes | ✅ Yes |
+| **Best For** | Trying out Fredger | Early adopters who want full features at a discount | Businesses & power users |
+
+👉 **Believer Plan is a one-time early adopter deal!** Save 45% on the yearly plan before prices increase.
+🚀 **Upgrade now to get unlimited AI-powered invoicing & insights!**
+
+
 ## Roadmap
 
 - PDF 2 Markdown

@@ -22,7 +22,7 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
-                    <Link className="block w-full" href="#" as="button">
+                    <Link className="block w-full" href={route('subscription.index')} as="button">
                         <span className="text-xxs rounded-sm bg-linear-to-r/oklch from-indigo-500 to-teal-500 px-1.5 py-0.5 font-mono font-bold text-white">
                             PRO
                         </span>

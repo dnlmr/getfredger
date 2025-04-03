@@ -282,7 +282,7 @@ const RoleDropdown = ({ member, teamId, onRemoveMember }: { member: Member; team
                         {showRoleOptions && <DropdownMenuSeparator />}
                         <DropdownMenuItem
                             onClick={() => onRemoveMember(member)}
-                            className="text-red-600 focus:bg-red-50 focus:text-red-700 dark:text-red-400 dark:focus:bg-red-950/20 dark:focus:text-red-300"
+                            className="text-red-600 focus:bg-red-50 focus:text-red-700 dark:text-red-400 dark:focus:bg-red-950/50 dark:focus:text-red-300"
                         >
                             <Trash className="h-4 w-4 text-red-500" />
                             Remove from team
@@ -401,6 +401,7 @@ export default function TeamMembers() {
                                     <Button
                                         className="bg-linear-to-r/oklch from-indigo-500 to-teal-500 whitespace-nowrap text-white hover:from-indigo-600 hover:to-teal-600"
                                         size="sm"
+                                        onClick={() => router.visit(route('subscription.index'))}
                                     >
                                         Upgrade to Pro
                                     </Button>
