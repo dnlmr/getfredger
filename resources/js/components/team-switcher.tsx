@@ -63,7 +63,10 @@ export function TeamSwitcher() {
                 form.reset();
                 // toast.success(`Team "${form.data.name}" created successfully`);
             },
-            preserveState: false,
+            preserveState: (page) => {
+                // Only preserve state if there are validation errors
+                return Object.keys(page.props.errors).length > 0;
+            },
         });
     };
 

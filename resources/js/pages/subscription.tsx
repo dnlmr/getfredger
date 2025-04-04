@@ -25,8 +25,17 @@ type Props = {
 
 // Define features for each plan
 const planFeatures = {
-    monthly: ['200 invoices / month', 'Team support (5 users)', 'Export to excel', 'ZIP all invoices'],
-    yearly_believer: ['200 invoices / month', 'Team support (5 users)', 'Export to excel', 'ZIP all invoices', '55% OFF!!!', '+ 14 months free'],
+    monthly: ['200 invoices / month', 'Team support (5 teams)', 'Notifications', 'Export to Excel / CSV', 'ZIP all invoices'],
+    yearly_believer: [
+        '2400 invoices / year',
+        'Team support (5 teams)',
+        'Notifications',
+        'Export to Excel / CSV',
+        'ZIP all invoices',
+        '55% off',
+        '+ 14 months free',
+        'Limited time offer',
+    ],
 };
 
 export default function Dashboard({ plans }: Props) {
