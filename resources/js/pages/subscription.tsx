@@ -27,7 +27,7 @@ type Props = {
 const planFeatures = {
     monthly: ['200 invoices / month', 'Team support (5 teams)', 'Notifications', 'Export to Excel / CSV', 'ZIP all invoices'],
     yearly_believer: [
-        '2400 invoices / year',
+        '200 invoices / month',
         'Team support (5 teams)',
         'Notifications',
         'Export to Excel / CSV',
