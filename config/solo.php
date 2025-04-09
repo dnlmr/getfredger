@@ -62,7 +62,7 @@ return [
         'Pint' => Command::from('./vendor/bin/pint --ansi')->lazy(),
         // 'Queue' => Command::from('php artisan queue:work')->lazy(), // Horizon is used for queues
         'Tests' => Command::from('php artisan test --colors=always')->withEnv(['APP_ENV' => 'testing'])->lazy(),
-        'Make' => new MakeCommand,
+        // 'Make' => new MakeCommand,
     ],
 
     /**

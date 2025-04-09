@@ -33,7 +33,7 @@ it('creates an invite', function () {
         ])
         ->assertRedirect();
 
-    Mail::assertSent(TeamInvitation::class, function (TeamInvitation $mail) use ($email) {
+    Mail::assertQueued(TeamInvitation::class, function (TeamInvitation $mail) use ($email) {
         return $mail->hasTo($email) &&
                 $mail->teamInvite->token === 'abc';
     });
