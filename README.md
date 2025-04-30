@@ -54,3 +54,9 @@ Alternatively, you can use the following table:
     - pdfjs-dist
 
 - https://matthiasweiss.at/blog/bulletproofing-inertia-how-i-maximize-type-safety-in-laravel-monoliths/
+
+## Paddle integration
+
+- https://spike.opcodes.io/blog/how-to-use-paddle-with-laravel
+- https://spike.opcodes.io/blog/how-to-sell-api-credits-in-laravel
+- https://spike.opcodes.io/blog/how-to-sell-multiple-types-of-credits
