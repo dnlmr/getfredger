@@ -28,7 +28,7 @@ export function TeamSwitcher() {
     const isMobile = useIsMobile();
     const { auth } = usePage<SharedData>().props;
     const user = auth.user;
-    const cleanup = useMobileNavigation();
+    const resetMobileNavigation = useMobileNavigation();
     const [showAddTeamModal, setShowAddTeamModal] = useState(false);
 
     const form = useForm({
@@ -107,7 +107,7 @@ export function TeamSwitcher() {
                             <DropdownMenuGroup>
                                 <DropdownMenuLabel className="text-muted-foreground text-xs">Current Team Settings</DropdownMenuLabel>
                                 <DropdownMenuItem className="gap-2 p-2" asChild>
-                                    <Link className="block w-full" href={route('team.edit')} as="button" onClick={cleanup}>
+                                    <Link className="block w-full" href={route('team.edit')} as="button" onClick={resetMobileNavigation}>
                                         <div className="flex size-6 items-center justify-center rounded-sm">
                                             <Settings className="size-4 shrink-0" />
                                         </div>
