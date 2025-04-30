@@ -20,7 +20,7 @@ import { SharedData, Team } from '@/types';
 import { Link, router, useForm, usePage } from '@inertiajs/react';
 import { ChevronsUpDown, Plus, Settings, User, Users } from 'lucide-react';
 import { useState } from 'react';
-// import { toast } from 'sonner';
+import { toast } from 'sonner';
 import AppLogoIcon from './app-logo-icon';
 
 export function TeamSwitcher() {
@@ -47,7 +47,9 @@ export function TeamSwitcher() {
                 onSuccess: () => {
                     router.flushAll();
                     router.reload({ only: ['auth'] });
-                    // toast.success(`Switched to team "${team.name}"`);
+                    setTimeout(() => {
+                        toast.success(`Switched to team "${team.name}"`);
+                    }, 500);
                 },
                 preserveState: false,
             },
