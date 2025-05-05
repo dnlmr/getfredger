@@ -392,7 +392,7 @@ export default function TeamMembers() {
                         />
 
                         {isPersonalTeam && (
-                            <div className="mt-4 rounded-lg border border-sky-100 bg-sky-50 p-4 text-sm text-sky-700 dark:border-sky-200/10 dark:bg-sky-700/10 dark:text-sky-300">
+                            <div className="rounded-lg border border-sky-100 bg-sky-50 p-4 text-sm text-sky-700 dark:border-sky-200/10 dark:bg-sky-700/10 dark:text-sky-100">
                                 <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
                                     <p>
                                         This team was created when you registered and serves as your personal workspace. Your personal team cannot
