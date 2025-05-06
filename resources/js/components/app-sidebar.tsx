@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { TeamSwitcher } from '@/components/team-switcher';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
-import { Bell, BookOpen, CreditCard, Folder, LayoutGrid, UploadCloud } from 'lucide-react';
+import { Bell, CreditCard, Folder, LayoutGrid, UploadCloud } from 'lucide-react';
 
 const mainNavItems: NavItem[] = [
     {
@@ -31,14 +31,9 @@ const mainNavItems: NavItem[] = [
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Repository',
+        title: 'React Starter Kit',
         href: 'https://github.com/laravel/react-starter-kit',
         icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits',
-        icon: BookOpen,
     },
 ];
 
