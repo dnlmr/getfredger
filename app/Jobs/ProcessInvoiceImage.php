@@ -106,7 +106,8 @@ class ProcessInvoiceImage implements ShouldQueue
                 new StringSchema(name: 'extracted_text', description: 'The full text extracted from the invoice/receipt in markdown format. This is the raw text extracted from the image. Format should be a string containing the full text, tables and formatting.'),
 
                 // Confidence score
-                new NumberSchema('confidence', description: 'The confidence score of the OCR process. Format should be a number between 0 and 100. e.g., "95" for 95% confidence'),
+                new NumberSchema('confidence', description: 'The confidence score of the OCR process. How confident is the AI that the extracted data is correct? 0 means not confident at all, 100 means very confident. Format should be a number between 0 and 100.'),
+                // new NumberSchema('confidence', description: 'How good is the provided image quality for ORC? 0 means not good at all, 100 means perfect. Format should be a number between 0 and 100.'),
             ],
             requiredFields: [
                 'invoice_number',
@@ -160,14 +161,18 @@ RULES:
         Log::info('Sending image to Prism for processing', [
             'invoice_id' => $this->invoice->id,
             'image_path' => $imagePath,
+            // 'prompt' => $prompt,
         ]);
 
         // Send to AI API endpoint for processing
         $response = Prism::structured()
-            ->using(Provider::OpenAI, 'gpt-4o-mini')
+            // ->using(Provider::OpenAI, 'gpt-4o-mini')
+            // ->using(Provider::Ollama, 'gemma3:12b')
+            ->using(Provider::Groq, 'meta-llama/llama-4-scout-17b-16e-instruct')
             ->withSchema($schema)
             ->usingTemperature(0)
             ->withMessages([$message])
+            // ->withClientOptions(['timeout' => 120])
             ->asStructured();
 
         if ($response && $response->structured) {
