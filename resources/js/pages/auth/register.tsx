@@ -5,6 +5,7 @@ import { FormEventHandler } from 'react';
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
@@ -14,6 +15,7 @@ type RegisterForm = {
     email: string;
     password: string;
     password_confirmation: string;
+    terms: boolean;
 };
 
 export default function Register() {
@@ -22,6 +24,7 @@ export default function Register() {
         email: '',
         password: '',
         password_confirmation: '',
+        terms: false,
     });
 
     const submit: FormEventHandler = (e) => {
@@ -101,7 +104,24 @@ export default function Register() {
                         <InputError message={errors.password_confirmation} />
                     </div>
 
-                    <Button type="submit" className="mt-2 w-full" tabIndex={5} disabled={processing}>
+                    <div className="flex items-center space-x-2">
+                        <Checkbox
+                            id="terms"
+                            checked={data.terms}
+                            onCheckedChange={(checked) => setData('terms', !!checked)}
+                            disabled={processing}
+                            tabIndex={5}
+                            required
+                        />
+                        <Label
+                            htmlFor="terms"
+                        >
+                            I agree to the Terms of Service and Privacy Policy
+                        </Label>
+                        <InputError message={errors.terms} />
+                    </div>
+
+                    <Button type="submit" className="mt-2 w-full" tabIndex={6} disabled={processing}>
                         {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                         Create account
                     </Button>
@@ -109,7 +129,7 @@ export default function Register() {
 
                 <div className="text-muted-foreground text-center text-sm">
                     Already have an account?{' '}
-                    <TextLink href={route('login')} tabIndex={6}>
+                    <TextLink href={route('login')} tabIndex={7}>
                         Log in
                     </TextLink>
                 </div>
