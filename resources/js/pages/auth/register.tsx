@@ -113,11 +113,7 @@ export default function Register() {
                             tabIndex={5}
                             required
                         />
-                        <Label
-                            htmlFor="terms"
-                        >
-                            I agree to the Terms of Service and Privacy Policy
-                        </Label>
+                        <Label htmlFor="terms">I agree to the Terms of Service and Privacy Policy</Label>
                         <InputError message={errors.terms} />
                     </div>
 

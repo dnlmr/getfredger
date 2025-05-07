@@ -53,13 +53,11 @@ return new class extends Migration
             $table->text('extracted_text')->nullable();
 
             // Token usage
-            $table->string('image_prompt_tokens')->nullable();
-            $table->string('image_completion_tokens')->nullable();
-            $table->string('text_prompt_tokens')->nullable();
-            $table->string('text_completion_tokens')->nullable();
+            $table->string('prompt_tokens')->nullable();
+            $table->string('completion_tokens')->nullable();
 
             // Confidence score
-            $table->unsignedInteger('image_confidence')->nullable();
+            $table->unsignedInteger('confidence')->nullable();
 
             // Payment Details
             $table->dateTime('paid_at')->nullable();
