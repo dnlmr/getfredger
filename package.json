@@ -48,6 +48,7 @@
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "concurrently": "^9.1.2",
+        "dayjs": "^1.11.13",
         "globals": "^16.0.0",
         "laravel-vite-plugin": "^1.2",
         "lucide-react": "^0.507.0",

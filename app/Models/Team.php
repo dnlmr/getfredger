@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Team extends Model
 {
@@ -20,5 +21,13 @@ class Team extends Model
     public function invites()
     {
         return $this->hasMany(TeamInvite::class);
+    }
+
+    /**
+     * Get the invoices associated with the team.
+     */
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
     }
 }

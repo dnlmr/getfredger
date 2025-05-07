@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\UploadController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -12,7 +13,10 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
 
-    Route::post('/invoices/upload', UploadController::class)
+    // Route::post('/invoices/upload', UploadController::class)
+    //     ->name('invoices.upload');
+
+    Route::post('/invoices/upload', [InvoiceController::class, 'upload'])
         ->name('invoices.upload');
 
     // Subscription routes
