@@ -43,7 +43,7 @@ return new class extends Migration
             $table->unsignedBigInteger('subtotal')->nullable();
             $table->unsignedInteger('tax_rate')->nullable(); // Store as integer (e.g., 1900 for 19%)
             $table->unsignedBigInteger('tax_amount')->nullable();
-            $table->unsignedBigInteger('discount')->nullable();
+            $table->string('discount')->nullable();
             $table->unsignedBigInteger('total')->nullable();
             $table->string('currency')->default('EUR');
 
@@ -52,9 +52,10 @@ return new class extends Migration
             $table->text('payment_terms')->nullable();
             $table->text('extracted_text')->nullable();
 
-            // Token usage
+            // Token usage & model
             $table->string('prompt_tokens')->nullable();
             $table->string('completion_tokens')->nullable();
+            $table->string('model')->nullable();
 
             // Confidence score
             $table->unsignedInteger('confidence')->nullable();

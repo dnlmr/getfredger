@@ -84,12 +84,14 @@ class ProcessInvoiceImage implements ShouldQueue
             'image_path' => $imagePath,
         ]);
 
+        // Set the model to use (e.g., 'gpt-4.1', 'gpt-4o-mini', etc.)
+        $model = 'gpt-4o-mini';
+
         // Send to AI API endpoint for processing
         $response = Prism::structured()
             // ->using(Provider::Ollama, 'gemma3:12b')
             // ->using(Provider::Groq, 'meta-llama/llama-4-scout-17b-16e-instruct')
-            // ->using(Provider::OpenAI, 'gpt-4.1') // BEST MODEL!
-            ->using(Provider::OpenAI, 'gpt-4o-mini')
+            ->using(Provider::OpenAI, $model)
             ->withSchema($schema)
             ->usingTemperature(0)
             ->withMessages([$message])
@@ -106,6 +108,7 @@ class ProcessInvoiceImage implements ShouldQueue
             $this->invoice->fill($response->structured);
             $this->invoice->prompt_tokens = $response->usage->promptTokens;
             $this->invoice->completion_tokens = $response->usage->completionTokens;
+            $this->invoice->model = $model;
             $this->invoice->save();
 
         } else {
