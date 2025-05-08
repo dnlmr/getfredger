@@ -59,15 +59,15 @@ export interface User {
 export interface Invoice {
     id: number;
     invoice_number: string;
-    invoice_title: string | null; // Added
-    sender_company_name: string | null; // Added
+    invoice_title: string | null;
+    sender_company_name: string | null;
     status: string;
-    subtotal: number | null; // Added
-    tax_rate: number | null; // Added
-    tax_amount: number | null; // Added
+    subtotal: number | null;
+    tax_rate: number | null;
+    tax_amount: number | null;
     total: number;
     invoice_date: string;
     due_date: string;
-    currency: string; // Added
+    currency: string;
     // Add other invoice properties as needed
 }

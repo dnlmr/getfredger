@@ -35,7 +35,7 @@ class InvoiceSchema
                 new NumberSchema('subtotal', description: 'The subtotal amount before tax and discounts. Format should be a number without decimal places. e.g., "1000" for $10.00, "2790" for $27.90'),
                 new NumberSchema('tax_rate', description: 'The tax rate applied to the subtotal. Format should be a number without decimal places. e.g., "1900" for 19%, "500" for 5%'),
                 new NumberSchema('tax_amount', description: 'The total tax amount applied to the subtotal. Format should be a number without decimal places. e.g., "190" for $1.90, "500" for $5.00'),
-                new NumberSchema('discount', description: 'The total discount amount applied to the subtotal. Format should be an integer without decimal places and has to be a positive number. Transform negative numbers to positive. e.g., "100" for $1.00, "500" for -$5.00'),
+                new NumberSchema('discount', description: 'The total discount amount applied to the subtotal. Format has to be an integer without decimal places and has to be a positive number. Transform negative numbers to positive. e.g., "100" for $1.00, "500" for -$5.00'),
                 new NumberSchema('total', description: 'The total amount after tax and discounts. Format should be a number without decimal places. e.g., "1000" for $10.00, "2790" for $27.90'),
                 new StringSchema(name: 'currency', description: 'The currency of the amounts. Format should be a 3-letter ISO 4217 currency code. For example, "USD" for US dollars, "EUR" for euros'),
 

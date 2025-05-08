@@ -88,7 +88,8 @@ class ProcessInvoiceImage implements ShouldQueue
         $response = Prism::structured()
             // ->using(Provider::Ollama, 'gemma3:12b')
             // ->using(Provider::Groq, 'meta-llama/llama-4-scout-17b-16e-instruct')
-            ->using(Provider::OpenAI, 'gpt-4.1') // BEST MODEL!
+            // ->using(Provider::OpenAI, 'gpt-4.1') // BEST MODEL!
+            ->using(Provider::OpenAI, 'gpt-4o-mini')
             ->withSchema($schema)
             ->usingTemperature(0)
             ->withMessages([$message])
