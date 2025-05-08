@@ -3,7 +3,7 @@ import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import { type BreadcrumbItem, type Invoice } from '@/types';
 import { Head, router } from '@inertiajs/react';
 import { AlertCircle, CheckCircle, FolderUp, ImageIcon, Upload, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -34,50 +34,9 @@ const FileSchema = z.object({
         .refine((file) => Object.keys(ACCEPTED_FILE_TYPES).includes(file.type), 'Only images (JPG, PNG, GIF) and PDF files are accepted'),
 });
 
-const invoices = [
-    {
-        invoice: 'INV001',
-        paymentStatus: 'Paid',
-        totalAmount: '$250.00',
-        paymentMethod: 'Credit Card',
-    },
-    {
-        invoice: 'INV002',
-        paymentStatus: 'Pending',
-        totalAmount: '$150.00',
-        paymentMethod: 'PayPal',
-    },
-    {
-        invoice: 'INV003',
-        paymentStatus: 'Unpaid',
-        totalAmount: '$350.00',
-        paymentMethod: 'Bank Transfer',
-    },
-    {
-        invoice: 'INV004',
-        paymentStatus: 'Paid',
-        totalAmount: '$450.00',
-        paymentMethod: 'Credit Card',
-    },
-    {
-        invoice: 'INV005',
-        paymentStatus: 'Paid',
-        totalAmount: '$550.00',
-        paymentMethod: 'PayPal',
-    },
-    {
-        invoice: 'INV006',
-        paymentStatus: 'Pending',
-        totalAmount: '$200.00',
-        paymentMethod: 'Bank Transfer',
-    },
-    {
-        invoice: 'INV007',
-        paymentStatus: 'Unpaid',
-        totalAmount: '$300.00',
-        paymentMethod: 'Credit Card',
-    },
-];
+interface DashboardProps {
+    invoices: Invoice[];
+}
 
 // Invoice Upload Dropzone Component
 const InvoiceUploadDropzone = () => {
@@ -443,7 +402,17 @@ const InvoiceUploadDropzone = () => {
     );
 };
 
-export default function Dashboard() {
+export default function Dashboard({ invoices }: DashboardProps) {
+    const formatCurrency = (amount: number | null | undefined, currency: string) => {
+        if (amount === null || amount === undefined) return '-';
+        return new Intl.NumberFormat(undefined, { style: 'currency', currency: currency }).format(amount / 100);
+    };
+
+    const formatTaxRate = (taxRate: number | null | undefined) => {
+        if (taxRate === null || taxRate === undefined) return '-';
+        return `${taxRate / 100}%`;
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -464,25 +433,37 @@ export default function Dashboard() {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead className="w-[100px]">Invoice</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead>Method</TableHead>
-                                    <TableHead className="text-right">Amount</TableHead>
+                                    <TableHead>Title</TableHead>
+                                    <TableHead>Sender</TableHead>
+                                    <TableHead>Invoice Date</TableHead>
+                                    <TableHead className="text-right">Subtotal</TableHead>
+                                    <TableHead className="text-right">Tax</TableHead>
+                                    <TableHead className="text-right">Total</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {invoices.map((invoice) => (
-                                    <TableRow key={invoice.invoice}>
-                                        <TableCell className="font-medium">{invoice.invoice}</TableCell>
-                                        <TableCell>{invoice.paymentStatus}</TableCell>
-                                        <TableCell>{invoice.paymentMethod}</TableCell>
-                                        <TableCell className="text-right">{invoice.totalAmount}</TableCell>
+                                    <TableRow key={invoice.id}>
+                                        <TableCell className="font-medium">{invoice.invoice_number}</TableCell>
+                                        <TableCell>{invoice.invoice_title || '-'}</TableCell>
+                                        <TableCell>{invoice.sender_company_name || '-'}</TableCell>
+                                        <TableCell>{new Date(invoice.invoice_date).toLocaleDateString()}</TableCell>
+                                        <TableCell className="text-right">{formatCurrency(invoice.subtotal, invoice.currency)}</TableCell>
+                                        <TableCell className="text-right">
+                                            {formatCurrency(invoice.tax_amount, invoice.currency)} ({formatTaxRate(invoice.tax_rate)})
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            {formatCurrency(invoice.total, invoice.currency)}
+                                        </TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
                             <TableFooter>
                                 <TableRow>
-                                    <TableCell colSpan={3}>Total</TableCell>
-                                    <TableCell className="text-right">$2,500.00</TableCell>
+                                    <TableCell colSpan={6}>Total</TableCell>
+                                    <TableCell className="text-right">
+                                        {formatCurrency(invoices.reduce((acc, inv) => acc + inv.total, 0), invoices[0]?.currency || 'USD')}
+                                    </TableCell>
                                 </TableRow>
                             </TableFooter>
                         </Table>

@@ -55,3 +55,19 @@ export interface User {
     permissions?: string[];
     [key: string]: unknown; // This allows for additional properties...
 }
+
+export interface Invoice {
+    id: number;
+    invoice_number: string;
+    invoice_title: string | null; // Added
+    sender_company_name: string | null; // Added
+    status: string;
+    subtotal: number | null; // Added
+    tax_rate: number | null; // Added
+    tax_amount: number | null; // Added
+    total: number;
+    invoice_date: string;
+    due_date: string;
+    currency: string; // Added
+    // Add other invoice properties as needed
+}

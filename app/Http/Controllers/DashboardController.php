@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -12,6 +13,12 @@ class DashboardController extends Controller
      */
     public function __invoke(Request $request)
     {
-        return Inertia::render('dashboard');
+        $user = Auth::user();
+        $currentTeam = $user->currentTeam;
+        $invoices = $currentTeam ? $currentTeam->invoices()->latest()->get() : collect();
+
+        return Inertia::render('dashboard', [
+            'invoices' => $invoices,
+        ]);
     }
 }

@@ -74,7 +74,7 @@ class ProcessInvoiceImage implements ShouldQueue
             description: 'Schema for invoice processing',
             properties: [
                 // Invoice details
-                new StringSchema(name: 'invoice_number', description: 'The invoice number from the document'),
+                new StringSchema(name: 'invoice_number', description: 'The invoice number from the document. If you cannot find it, use "N/A"'),
                 new StringSchema(name: 'invoice_title', description: 'The main subject of the invoice/receipt in 1-3 words. Format should be a noun or noun phrase like "Office Supplies", "Restaurant Bill", "Software License", etc'),
                 new StringSchema(name: 'invoice_description', description: 'A short description of the invoice/receipt. Format should be a sentence or two describing the purpose of the invoice/receipt. For example, "Paper for printer", "Dinner at XYZ", "Adobe Photoshop subscription", etc'),
                 new StringSchema(name: 'invoice_date', description: 'The date of the invoice/receipt. Format should be YYYY-MM-DD. For example, "2023-03-15"'),
@@ -94,7 +94,7 @@ class ProcessInvoiceImage implements ShouldQueue
                 new NumberSchema('subtotal', description: 'The subtotal amount before tax and discounts. Format should be a number without decimal places. e.g., "1000" for $10.00, "2790" for $27.90'),
                 new NumberSchema('tax_rate', description: 'The tax rate applied to the subtotal. Format should be a number without decimal places. e.g., "1900" for 19%, "500" for 5%'),
                 new NumberSchema('tax_amount', description: 'The total tax amount applied to the subtotal. Format should be a number without decimal places. e.g., "190" for $1.90, "500" for $5.00'),
-                new NumberSchema('discount', description: 'The total discount amount applied to the subtotal. Format should be a number without decimal places. e.g., "100" for $1.00, "500" for $5.00'),
+                new NumberSchema('discount', description: 'The total discount amount applied to the subtotal. Format should be an integer without decimal places and has to be a positive number. Transform negative numbers to positive. e.g., "100" for $1.00, "500" for -$5.00'),
                 new NumberSchema('total', description: 'The total amount after tax and discounts. Format should be a number without decimal places. e.g., "1000" for $10.00, "2790" for $27.90'),
                 new StringSchema(name: 'currency', description: 'The currency of the amounts. Format should be a 3-letter ISO 4217 currency code. For example, "USD" for US dollars, "EUR" for euros'),
 
@@ -166,13 +166,13 @@ RULES:
 
         // Send to AI API endpoint for processing
         $response = Prism::structured()
-            // ->using(Provider::OpenAI, 'gpt-4o-mini')
             // ->using(Provider::Ollama, 'gemma3:12b')
-            ->using(Provider::Groq, 'meta-llama/llama-4-scout-17b-16e-instruct')
+            ->using(Provider::OpenAI, 'gpt-4.1') // BEST MODEL!
+            // ->using(Provider::Groq, 'meta-llama/llama-4-scout-17b-16e-instruct')
             ->withSchema($schema)
             ->usingTemperature(0)
             ->withMessages([$message])
-            // ->withClientOptions(['timeout' => 120])
+            ->withClientOptions(['timeout' => 120])
             ->asStructured();
 
         if ($response && $response->structured) {
