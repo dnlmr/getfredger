@@ -66,3 +66,7 @@ Alternatively, you can use the following table:
 - https://getmika.de
 - https://www.veryfi.com/
 - https://www.zoho.com/invoice/
+
+## Prompts
+
+- This might be a bigger one... In my app users can upload an image of invoice. it will be sent to an ai to get output via ai ocr. now i would like to add tags to each invoice e.g. 'groceries', 'tech', 'car', 'cosmetics' to categorize the invoices later on. you can have access to my #codebase . what is the best way to do this? users should be able to create their own tags as well as use preselected ones.
