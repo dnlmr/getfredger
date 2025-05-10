@@ -81,11 +81,6 @@ class InvoiceController extends Controller
         $invoice = Invoice::create([
             'status' => InvoiceStatus::UPLOADED,
             'filename' => $request->file('file')->getClientOriginalName(),
-            'subtotal' => 0,
-            'tax_rate' => 0,
-            'tax_amount' => 0,
-            'discount' => 0,
-            'total' => 0,
             'user_id' => auth()->id(),
             'team_id' => auth()->user()->currentTeam->id ?? null,
         ]);

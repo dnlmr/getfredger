@@ -5,7 +5,8 @@ namespace App\Enums;
 enum InvoiceStatus: string
 {
     case UPLOADED = 'uploaded';
-    case DRAFT = 'draft';
+    case NO_INVOICE = 'no_invoice';
+    case PROCESSED = 'processed';
     case SENT = 'sent';
     case PAID = 'paid';
     case OVERDUE = 'overdue';
@@ -15,7 +16,8 @@ enum InvoiceStatus: string
     {
         return match ($this) {
             self::UPLOADED => 'Uploaded',
-            self::DRAFT => 'Draft',
+            self::NO_INVOICE => 'No Invoice',
+            self::PROCESSED => 'Processed',
             self::SENT => 'Sent',
             self::PAID => 'Paid',
             self::OVERDUE => 'Overdue',
@@ -27,7 +29,8 @@ enum InvoiceStatus: string
     {
         return match ($this) {
             self::UPLOADED => 'blue',
-            self::DRAFT => 'gray',
+            self::NO_INVOICE => 'red',
+            self::PROCESSED => 'gray',
             self::SENT => 'blue',
             self::PAID => 'green',
             self::OVERDUE => 'red',

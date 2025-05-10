@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Enums\InvoiceStatus;
 use App\Models\Invoice;
 use App\Prompts\InvoicePrompt;
 use App\Schemas\InvoiceSchema;
@@ -104,11 +105,56 @@ class ProcessInvoiceImage implements ShouldQueue
                 'data' => $response->structured,
             ]);
 
-            // Save the structured data to the invoice
-            $this->invoice->fill($response->structured);
+            // Always store model and token usage from this AI call
             $this->invoice->prompt_tokens = $response->usage->promptTokens;
             $this->invoice->completion_tokens = $response->usage->completionTokens;
             $this->invoice->model = $model;
+
+            // Check if the AI determined it's not an invoice based on the specific title
+            if (isset($response->structured['invoice_title']) && $response->structured['invoice_title'] === 'The image is not an invoice/receipt') {
+                Log::info('AI determined the document is not an invoice/receipt based on title.', [
+                    'invoice_id' => $this->invoice->id,
+                    'invoice_title' => $response->structured['invoice_title'],
+                    'invoice_description' => $response->structured['invoice_description'] ?? 'N/A',
+                ]);
+                $this->invoice->status = InvoiceStatus::NO_INVOICE;
+
+                // Persist the AI's findings, including the specific title and description
+                $this->invoice->invoice_title = $response->structured['invoice_title'];
+                $this->invoice->invoice_description = $response->structured['invoice_description'] ?? 'No description provided.';
+
+                // Ensure invoice_date is null if not a valid date, as per prompt instructions
+                $this->invoice->invoice_number = null;
+                $this->invoice->invoice_date = null;
+
+                $this->invoice->sender_company_name = null;
+                $this->invoice->sender_address = null;
+
+                $this->invoice->total = null;
+                $this->invoice->subtotal = null;
+                $this->invoice->tax_rate = null;
+                $this->invoice->tax_amount = null;
+                $this->invoice->discount = null;
+                $this->invoice->currency = null;
+                $this->invoice->notes = null;
+                $this->invoice->payment_terms = null;
+                $this->invoice->sender_email = null;
+                $this->invoice->sender_tax_number = null;
+                $this->invoice->recipient_company_name = null;
+                $this->invoice->recipient_address = null;
+                $this->invoice->recipient_tax_number = null;
+                $this->invoice->confidence = $response->structured['confidence'] ?? 0;
+
+                $this->invoice->extracted_text = $response->structured['extracted_text'] ?? null;
+            } else {
+                // It is (or seems to be) an invoice
+                Log::info('AI processed the document as an invoice.', [
+                    'invoice_id' => $this->invoice->id,
+                ]);
+                $this->invoice->fill($response->structured);
+                $this->invoice->status = InvoiceStatus::PROCESSED;
+            }
+
             $this->invoice->save();
 
         } else {

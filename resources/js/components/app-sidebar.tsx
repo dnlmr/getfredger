@@ -4,13 +4,18 @@ import { NavUser } from '@/components/nav-user';
 import { TeamSwitcher } from '@/components/team-switcher';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
-import { Bell, CreditCard, Folder, LayoutGrid, UploadCloud } from 'lucide-react';
+import { Bell, CreditCard, Folder, LayoutGrid, Tag, UploadCloud } from 'lucide-react';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: '/dashboard',
         icon: LayoutGrid,
+    },
+    {
+        title: 'Tags',
+        href: '/subscription',
+        icon: Tag,
     },
     {
         title: 'Notifications',

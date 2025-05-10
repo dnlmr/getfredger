@@ -22,7 +22,7 @@ class InvoiceFactory extends Factory
         return [
             'team_id' => Team::factory(),
             'user_id' => User::factory(),
-            'filename' => $this->faker->word() . '.pdf',
+            'filename' => $this->faker->word().'.pdf',
             'invoice_number' => $this->faker->unique()->numerify('INV-######'),
             'invoice_title' => $this->faker->sentence(3),
             'invoice_description' => $this->faker->optional()->paragraph,
@@ -41,6 +41,7 @@ class InvoiceFactory extends Factory
                 if (is_null($attributes['subtotal']) || is_null($attributes['tax_rate'])) {
                     return null;
                 }
+
                 return (int) ($attributes['subtotal'] * ($attributes['tax_rate'] / 10000));
             },
             'discount' => $this->faker->optional()->numberBetween(100, 5000), // Amount in cents
@@ -52,6 +53,7 @@ class InvoiceFactory extends Factory
                 if (isset($attributes['discount'])) {
                     $total -= $attributes['discount'];
                 }
+
                 return max(0, $total);
             },
             'currency' => 'EUR',

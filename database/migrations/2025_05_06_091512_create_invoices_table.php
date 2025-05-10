@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('invoice_description')->nullable();
             $table->date('invoice_date')->nullable();
             $table->enum('status', array_column(InvoiceStatus::cases(), 'value'))
-                ->default(InvoiceStatus::DRAFT->value);
+                ->default(InvoiceStatus::UPLOADED->value);
 
             // Sender Details
             $table->string('sender_company_name')->nullable();
@@ -45,7 +45,7 @@ return new class extends Migration
             $table->unsignedBigInteger('tax_amount')->nullable();
             $table->string('discount')->nullable();
             $table->unsignedBigInteger('total')->nullable();
-            $table->string('currency')->default('EUR');
+            $table->string('currency')->default('EUR')->nullable();
 
             // Additional Information
             $table->text('notes')->nullable();
