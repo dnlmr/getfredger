@@ -46,7 +46,6 @@ export function TeamSwitcher() {
             {
                 onSuccess: () => {
                     router.flushAll();
-                    router.reload({ only: ['auth'] });
                     setTimeout(() => {
                         toast.success(`Switched to team "${team.name}"`);
                     }, 500);
@@ -61,7 +60,6 @@ export function TeamSwitcher() {
             onSuccess: () => {
                 setShowAddTeamModal(false);
                 router.flushAll();
-                router.reload({ only: ['auth'] });
                 form.reset();
                 // toast.success(`Team "${form.data.name}" created successfully`);
             },
