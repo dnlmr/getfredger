@@ -404,12 +404,12 @@ const InvoiceUploadDropzone = () => {
 
 export default function Dashboard({ invoices }: DashboardProps) {
     const formatCurrency = (amount: number | null | undefined, currency: string) => {
-        if (amount === null || amount === undefined) return '';
+        if (amount === null || amount === undefined) return '-';
         return new Intl.NumberFormat(undefined, { style: 'currency', currency: currency }).format(amount / 100);
     };
 
     const formatTaxRate = (taxRate: number | null | undefined) => {
-        if (taxRate === null || taxRate === undefined) return '';
+        if (taxRate === null || taxRate === undefined) return '-';
         return `${taxRate / 100}%`;
     };
 
@@ -444,14 +444,13 @@ export default function Dashboard({ invoices }: DashboardProps) {
                             <TableBody>
                                 {invoices.map((invoice) => (
                                     <TableRow key={invoice.id}>
-                                        <TableCell className="font-medium">{invoice.invoice_number || ''}</TableCell>
-                                        <TableCell>{invoice.invoice_title || ''}</TableCell>
-                                        <TableCell>{invoice.sender_company_name || ''}</TableCell>
-                                        <TableCell>{invoice.invoice_date ? new Date(invoice.invoice_date).toLocaleDateString() : ''}</TableCell>
+                                        <TableCell className="font-medium">{invoice.invoice_number}</TableCell>
+                                        <TableCell>{invoice.invoice_title || '-'}</TableCell>
+                                        <TableCell>{invoice.sender_company_name || '-'}</TableCell>
+                                        <TableCell>{new Date(invoice.invoice_date).toLocaleDateString()}</TableCell>
                                         <TableCell className="text-right">{formatCurrency(invoice.subtotal, invoice.currency)}</TableCell>
                                         <TableCell className="text-right">
-                                            {formatCurrency(invoice.tax_amount, invoice.currency)}{' '}
-                                            {invoice.tax_rate ? `(${formatTaxRate(invoice.tax_rate)})` : ''}
+                                            {formatCurrency(invoice.tax_amount, invoice.currency)} ({formatTaxRate(invoice.tax_rate)})
                                         </TableCell>
                                         <TableCell className="text-right">{formatCurrency(invoice.total, invoice.currency)}</TableCell>
                                     </TableRow>
