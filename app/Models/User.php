@@ -56,12 +56,12 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function teams(): BelongsToMany
     {
-        return $this->belongsToMany(Team::class);
+        return $this->belongsToMany(Team::class)->withCount('members');
     }
 
     public function currentTeam(): BelongsTo
     {
-        return $this->belongsTo(Team::class, 'current_team_id');
+        return $this->belongsTo(Team::class, 'current_team_id')->withCount('members');
     }
 
     /**

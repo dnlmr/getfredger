@@ -91,7 +91,16 @@ export function TeamSwitcher() {
                                 </div>
                                 <div className="grid flex-1 text-left text-sm leading-tight">
                                     <span className="truncate font-semibold">{user.current_team?.name || 'Select Team'}</span>
-                                    <span className="truncate text-xs">{user.current_team?.personal_team ? 'Personal team' : 'Team'}</span>
+                                    <span className="truncate text-xs">
+                                        {user.current_team?.personal_team
+                                            ? 'Personal team'
+                                            : (
+                                                <span className="flex items-center gap-1">
+                                                    {user.current_team?.members_count ? `${user.current_team.members_count} member${user.current_team.members_count !== 1 ? 's' : ''}` : ''}
+                                                </span>
+                                            )
+                                        }
+                                    </span>
                                 </div>
                                 <ChevronsUpDown className="ml-auto size-4" />
                             </SidebarMenuButton>

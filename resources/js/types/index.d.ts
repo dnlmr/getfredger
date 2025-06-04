@@ -38,6 +38,7 @@ export interface Team {
     user_id: number;
     created_at: string;
     updated_at: string;
+    members_count?: number;
 }
 
 export interface User {
