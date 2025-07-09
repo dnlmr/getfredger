@@ -441,7 +441,7 @@ export default function Dashboard({ invoices }: DashboardProps) {
                                     <TableHead className="text-right">Total</TableHead>
                                 </TableRow>
                             </TableHeader>
-                            <TableBody>
+                            <TableBody className="font-mono">
                                 {invoices.map((invoice) => (
                                     <TableRow key={invoice.id}>
                                         <TableCell className="font-medium">{invoice.invoice_number}</TableCell>
@@ -459,7 +459,7 @@ export default function Dashboard({ invoices }: DashboardProps) {
                             <TableFooter>
                                 <TableRow>
                                     <TableCell colSpan={6}>Total</TableCell>
-                                    <TableCell className="text-right">
+                                    <TableCell className="text-right font-mono">
                                         {formatCurrency(
                                             invoices.reduce((acc, inv) => acc + inv.total, 0),
                                             invoices[0]?.currency || 'USD',
