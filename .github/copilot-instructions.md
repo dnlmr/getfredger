@@ -8,7 +8,7 @@ This is a Laravel 12 application with a modern frontend stack. The project uses 
 - **Frontend**: React 19 with TypeScript
 - **Styling**: TailwindCSS 4
 - **UI Components**: shadcn/ui (latest)
-- **Bridge**: Inertia.js
+- **Bridge**: Inertia.js (full documentation: https://inertiajs.com/llms-full.txt)
 - **Database**: MySQL (development)
 - **Testing**: Pest PHP
 - **Admin Panel**: Filament v4 (beta)
@@ -196,13 +196,12 @@ app/
 │   ├── Controllers/     # Thin controllers
 │   ├── Middleware/      # Custom middleware
 │   └── Requests/        # Form request validation
-├── Models/              # Eloquent models (no $fillable)
-└── Services/            # Business logic services
+└── Models/              # Eloquent models (no $fillable)
 ```
 
 ### Frontend Structure
 ```
-resources/
+resources/kkk
 ├── js/
 │   ├── Components/      # Reusable React components
 │   ├── Pages/           # Inertia page components
