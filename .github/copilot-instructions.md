@@ -12,6 +12,7 @@ This is a Laravel 12 application with a modern frontend stack. The project uses 
 - **Database**: MySQL (development)
 - **Testing**: Pest PHP
 - **Admin Panel**: Filament v4 (beta)
+- **AI Integration**: PrismPHP (for AI API requests, full documentation: https://prismphp.com/llms-full.txt)
 
 ## Development Environment
 - `npm run dev` is always running - no need to start it
@@ -255,5 +256,9 @@ const submit = (e: FormEvent) => {
 - Use API resources for consistent JSON responses
 - Transform data appropriately for frontend consumption
 - Include necessary relationships in resources
+
+# PrismPHP Integration
+
+PrismPHP handles all AI API requests in this project, providing a unified interface for multiple providers (OpenAI, Anthropic, Gemini, etc.) in Laravel. It supports tool/function calling, structured output, multi-modal input, streaming, advanced caching, and provider-specific options. See the [full documentation](https://prismphp.com/llms-full.txt) for usage, configuration and best practices. Example usage, tool creation, and testing patterns are available in the docs and should be followed for new AI features.
 
 Remember: This project prioritizes modern development practices, type safety, and clean architecture. Always consider the user experience and maintainability when making code decisions.
