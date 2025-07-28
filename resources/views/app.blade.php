@@ -19,6 +19,10 @@
             })();
         </script>
 
+        <x-analytics />
+
+        {{-- Inline style to set the body background color based on our theme in app.css --}}
+
         {{-- Inline style to set the HTML background color based on our theme in app.css --}}
         <style>
             html {
