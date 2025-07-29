@@ -13,8 +13,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Prism\Prism\Enums\Provider;
+use Prism\Prism\Exceptions\PrismException;
 use Prism\Prism\Prism;
-use Prism\Prism\ValueObjects\Messages\Support\Image;
+use Prism\Prism\ValueObjects\Media\Image;
 use Prism\Prism\ValueObjects\Messages\UserMessage;
 
 class ProcessInvoiceImage implements ShouldQueue
@@ -77,7 +78,7 @@ class ProcessInvoiceImage implements ShouldQueue
         // Include image path in the prompt
         $message = new UserMessage(
             $prompt,
-            [Image::fromPath($imagePath)]
+            [Image::fromLocalPath($imagePath)]
         );
 
         Log::info('Sending image to Prism for processing', [
@@ -85,19 +86,32 @@ class ProcessInvoiceImage implements ShouldQueue
             'image_path' => $imagePath,
         ]);
 
-        // Set the model to use (e.g., 'gpt-4.1', 'gpt-4o-mini', etc.)
+        // Set the model to use (e.g., 'gpt-4o', 'gpt-4o-mini', etc.)
         $model = 'gpt-4o-mini';
 
-        // Send to AI API endpoint for processing
-        $response = Prism::structured()
-            // ->using(Provider::Ollama, 'gemma3:12b')
-            // ->using(Provider::Groq, 'meta-llama/llama-4-scout-17b-16e-instruct')
-            ->using(Provider::OpenAI, $model)
-            ->withSchema($schema)
-            ->usingTemperature(0)
-            ->withMessages([$message])
-            ->withClientOptions(['timeout' => 120])
-            ->asStructured();
+        try {
+            // Send to AI API endpoint for processing
+            $response = Prism::structured()
+                ->using(Provider::OpenAI, $model)
+                ->withSchema($schema)
+                ->usingTemperature(0)
+                ->withMessages([$message])
+                ->withClientOptions(['timeout' => 120])
+                // Explicitly disable strict mode for OpenAI
+                ->withProviderOptions(['schema' => ['strict' => false]])
+                ->asStructured();
+        } catch (PrismException $e) {
+            Log::error('Prism processing failed', [
+                'invoice_id' => $this->invoice->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            // You might want to mark the invoice as failed or retry
+            $this->invoice->status = InvoiceStatus::NO_INVOICE; // or create a FAILED status
+            $this->invoice->save();
+
+            return;
+        }
 
         if ($response && $response->structured) {
             Log::info('Received structured response from Prism, storing results', [

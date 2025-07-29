@@ -17,7 +17,7 @@ This is a Laravel 12 application with a modern frontend stack. The project uses 
 ## Development Environment
 - `npm run dev` is always running - no need to start it
 - Hot reloading is active for frontend changes
-- Laravel serves on standard port (typically 8000)
+- Laravel Horizon is always running for queues – no need to start it manually
 
 ## Laravel Conventions & Rules
 

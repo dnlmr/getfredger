@@ -25,6 +25,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Model::shouldBeStrict();
 
-        RequestException::dontTruncate();
+        // RequestException::dontTruncate();
     }
 }
