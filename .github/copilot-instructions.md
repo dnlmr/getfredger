@@ -15,7 +15,7 @@ This is a Laravel 12 application with a modern frontend stack. The project uses 
 - **AI Integration**: PrismPHP (for AI API requests, full documentation: https://prismphp.com/llms-full.txt)
 
 ## Development Environment
-- `npm run dev` is always running - no need to start it
+- `npm run dev` is always running - no need to start it manually (also no need to run `npm run build` manually)
 - Hot reloading is active for frontend changes
 - Laravel Horizon is always running for queues – no need to start it manually
 

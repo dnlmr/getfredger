@@ -1,7 +1,8 @@
+import { columns } from '@/components/invoices/columns';
+import { DataTable } from '@/components/invoices/data-table';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type Invoice } from '@/types';
 import { Head, router } from '@inertiajs/react';
@@ -403,16 +404,6 @@ const InvoiceUploadDropzone = () => {
 };
 
 export default function Dashboard({ invoices }: DashboardProps) {
-    const formatCurrency = (amount: number | null | undefined, currency: string) => {
-        if (amount === null || amount === undefined) return '-';
-        return new Intl.NumberFormat(undefined, { style: 'currency', currency: currency }).format(amount / 100);
-    };
-
-    const formatTaxRate = (taxRate: number | null | undefined) => {
-        if (taxRate === null || taxRate === undefined) return '-';
-        return `${taxRate / 100}%`;
-    };
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -428,46 +419,7 @@ export default function Dashboard({ invoices }: DashboardProps) {
                 </div>
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
                     <div className="flex flex-1 items-center gap-2 p-4">
-                        <Table>
-                            <TableCaption>A list of your recent invoices.</TableCaption>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-[100px]">Invoice</TableHead>
-                                    <TableHead>Title</TableHead>
-                                    <TableHead>Sender</TableHead>
-                                    <TableHead>Invoice Date</TableHead>
-                                    <TableHead className="text-right">Subtotal</TableHead>
-                                    <TableHead className="text-right">Tax</TableHead>
-                                    <TableHead className="text-right">Total</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody className="font-mono">
-                                {invoices.map((invoice) => (
-                                    <TableRow key={invoice.id}>
-                                        <TableCell className="font-medium">{invoice.invoice_number}</TableCell>
-                                        <TableCell>{invoice.invoice_title || '-'}</TableCell>
-                                        <TableCell>{invoice.sender_company_name || '-'}</TableCell>
-                                        <TableCell>{new Date(invoice.invoice_date).toLocaleDateString()}</TableCell>
-                                        <TableCell className="text-right">{formatCurrency(invoice.subtotal, invoice.currency)}</TableCell>
-                                        <TableCell className="text-right">
-                                            {formatCurrency(invoice.tax_amount, invoice.currency)} ({formatTaxRate(invoice.tax_rate)})
-                                        </TableCell>
-                                        <TableCell className="text-right">{formatCurrency(invoice.total, invoice.currency)}</TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                            <TableFooter>
-                                <TableRow>
-                                    <TableCell colSpan={6}>Total</TableCell>
-                                    <TableCell className="text-right font-mono">
-                                        {formatCurrency(
-                                            invoices.reduce((acc, inv) => acc + inv.total, 0),
-                                            invoices[0]?.currency || 'USD',
-                                        )}
-                                    </TableCell>
-                                </TableRow>
-                            </TableFooter>
-                        </Table>
+                        <DataTable columns={columns} data={invoices} />
                     </div>
                 </div>
             </div>
