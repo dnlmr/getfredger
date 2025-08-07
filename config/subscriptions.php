@@ -4,7 +4,7 @@ return [
     'plans' => [
         'monthly' => [
             'name' => 'Monthly',
-            'plan_id' => env('FREDGER_BELIEVER_MONTHLY_ID'),
+            'plan_id' => env('FREDGER_MONTHLY_ID'),
             'price' => '900',
             'max_monthly_credits' => 200,
         ],
