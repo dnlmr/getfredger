@@ -25,9 +25,9 @@ type Props = {
 
 // Define features for each plan
 const planFeatures = {
-    monthly: ['200 invoices / month', 'Team support (5 teams)', 'Notifications', 'Export to Excel / CSV', 'ZIP all invoices'],
+    monthly: ['100 invoices / month', 'Team support (5 teams)', 'Notifications', 'Export to Excel / CSV', 'ZIP all invoices'],
     yearly_believer: [
-        '200 invoices / month',
+        '100 invoices / month',
         'Team support (5 teams)',
         'Notifications',
         'Export to Excel / CSV',
@@ -96,7 +96,7 @@ export default function Dashboard({ plans }: Props) {
                                 </CardHeader>
                                 <CardContent className="flex-grow">
                                     <div className="mb-6 flex items-baseline">
-                                        <span className="font-ZZZ text-3xl font-bold">{formatPrice(plan.price)}</span>
+                                        <span className="text-3xl font-bold">{formatPrice(plan.price)}</span>
                                         <span className="text-muted-foreground ml-2">/{key === 'monthly' ? 'month' : 'year'}</span>
                                     </div>
                                     <ul className="space-y-3">
