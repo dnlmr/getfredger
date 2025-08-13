@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7edd42df2bde5444812d1332634e252c",
+    "content-hash": "6bf7808008f8a60af94283e8e91c9ea8",
     "packages": [
         {
             "name": "brick/math",
@@ -3068,16 +3068,16 @@
         },
         {
             "name": "prism-php/prism",
-            "version": "v0.83.2",
+            "version": "v0.84.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/prism-php/prism.git",
-                "reference": "5f53879d1f18be74cfe96e92390adb9aef8bd02b"
+                "reference": "c68a67d294bc8869370a3ff045ee226b625fd781"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/prism-php/prism/zipball/5f53879d1f18be74cfe96e92390adb9aef8bd02b",
-                "reference": "5f53879d1f18be74cfe96e92390adb9aef8bd02b",
+                "url": "https://api.github.com/repos/prism-php/prism/zipball/c68a67d294bc8869370a3ff045ee226b625fd781",
+                "reference": "c68a67d294bc8869370a3ff045ee226b625fd781",
                 "shasum": ""
             },
             "require": {
@@ -3133,7 +3133,7 @@
             "description": "A powerful Laravel package for integrating Large Language Models (LLMs) into your applications.",
             "support": {
                 "issues": "https://github.com/prism-php/prism/issues",
-                "source": "https://github.com/prism-php/prism/tree/v0.83.2"
+                "source": "https://github.com/prism-php/prism/tree/v0.84.0"
             },
             "funding": [
                 {
@@ -3141,7 +3141,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-08-04T23:16:03+00:00"
+            "time": "2025-08-12T17:08:33+00:00"
         },
         {
             "name": "psr/clock",
