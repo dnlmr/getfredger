@@ -13,7 +13,7 @@
     },
     "devDependencies": {
         "@eslint/js": "^9.35.0",
-        "@types/node": "^24.3.3",
+        "@types/node": "^24.4.0",
         "eslint": "^9.35.0",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-react": "^7.37.5",
@@ -68,7 +68,7 @@
         "zod": "^4.1.8"
     },
     "optionalDependencies": {
-        "@rollup/rollup-linux-x64-gnu": "4.50.1",
+        "@rollup/rollup-linux-x64-gnu": "4.50.2",
         "@tailwindcss/oxide-linux-x64-gnu": "^4.1.13",
         "lightningcss-linux-x64-gnu": "^1.30.1"
     }
